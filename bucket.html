@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sky Atlas — Bucket List</title>
+
+<style>
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* PAGE BACKGROUND */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #ffd9e8; /* baby pink */
+    height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* HOME ICON */
+.home-icon {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #e3c9ff;
+    color: #4a3b6b;
+    padding: 10px 12px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: 0.2s ease;
+    z-index: 999;
+}
+.home-icon:hover {
+    transform: scale(1.1);
+}
+
+/* TITLE */
+h1 {
+    text-align: center;
+    margin-top: 60px;
+    font-size: 40px;
+    color: #4a3b6b;
+    font-family: 'Great Vibes', cursive;
+}
+
+/* INPUT AREA */
+.input-box {
+    display: flex;
+    gap: 10px;
+    margin: 25px auto;
+    max-width: 500px;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    background: #fff;
+}
+
+.input-box button {
+    padding: 12px 20px;
+    border: none;
+    background: #e3c9ff;
+    color: #4a3b6b;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.input-box button:hover {
+    background: #d8baff;
+}
+
+/* LIST */
+ul {
+    list-style: none;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+li {
+    background: #ffe6f2;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* CHECKBOX */
+li input[type="checkbox"] {
+    transform: scale(1.3);
+    margin-right: 10px;
+}
+
+/* TEXT */
+.item-text {
+    flex: 1;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+    color: #ff5c8a;
+}
+.delete-btn:hover {
+    transform: scale(1.2);
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME BUTTON -->
+<div class="home-icon" onclick="window.location.href='index.html'">🏠</div>
+
+<h1>My Bucket List</h1>
+
+<!-- INPUT -->
+<div class="input-box">
+    <input id="bucketInput" type="text" placeholder="Add a place you want to visit…">
+    <button onclick="addItem()">Add</button>
+</div>
+
+<!-- LIST -->
+<ul id="bucketList"></ul>
+
+<script>
+/* LOAD SAVED LIST */
+let items = JSON.parse(localStorage.getItem("bucketList") || "[]");
+renderList();
+
+/* ADD ITEM */
+function addItem() {
+    const input = document.getElementById("bucketInput");
+    const text = input.value.trim();
+    if (text === "") return;
+
+    items.push({ text, checked: false });
+    input.value = "";
+    saveList();
+    renderList();
+}
+
+/* TOGGLE CHECK */
+function toggleCheck(index) {
+    items[index].checked = !items[index].checked;
+    saveList();
+    renderList();
+}
+
+/* DELETE ITEM */
+function deleteItem(index) {
+    items.splice(index, 1);
+    saveList();
+    renderList();
+}
+
+/* SAVE TO LOCALSTORAGE */
+function saveList() {
+    localStorage.setItem("bucketList", JSON.stringify(items));
+}
+
+/* RENDER LIST */
+function renderList() {
+    const list = document.getElementById("bucketList");
+    list.innerHTML = "";
+
+    items.forEach((item, index) => {
+        list.innerHTML += `
+            <li>
+                <input type="checkbox" ${item.checked ? "checked" : ""} onclick="toggleCheck(${index})">
+                <span class="item-text" style="text-decoration:${item.checked ? "line-through" : "none"}">
+                    ${item.text}
+                </span>
+                <button class="delete-btn" onclick="deleteItem(${index})">✖</button>
+            </li>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
