@@ -8,18 +8,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+/* GLOBAL */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Global */
-* { box-sizing: border-box; }
 body {
-    margin: 0;
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(#cfe9ff, #f7fbff);
-    color: #333;
-    overflow-x: hidden;
+    height: 100vh;
+    overflow: hidden;
 }
 
-/* Top bar */
+/* TOP BAR */
 .top-bar {
     width: 100%;
     padding: 10px 20px;
@@ -27,7 +26,6 @@ body {
     justify-content: center;
     position: fixed;
     top: 0;
-    left: 0;
     z-index: 20;
     background: transparent;
 }
@@ -49,7 +47,7 @@ body {
     box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
-/* Slide-down menu */
+/* MENU PANEL */
 .menu-panel {
     position: fixed;
     top: 60px;
@@ -61,14 +59,13 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     padding: 15px 25px;
     z-index: 19;
-
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
 }
 .menu-panel.open { max-height: 300px; }
 
-.menu-panel ul { list-style: none; padding: 0; margin: 0; }
+.menu-panel ul { list-style: none; }
 .menu-panel li { margin: 8px 0; }
 .menu-panel a {
     text-decoration: none;
@@ -76,28 +73,30 @@ body {
     font-weight: 500;
 }
 
-/* Hero */
+/* HERO FULL SCREEN */
 .hero {
+    height: 100vh;
+    width: 100%;
     text-align: center;
-    padding-top: 140px;
-    padding-bottom: 40px;
+    padding-top: 120px;
+    position: relative;
 }
 
+/* LOGO */
 .logo-title {
     font-family: 'Great Vibes', cursive;
     font-size: 80px;
     color: #3b4b73;
-    margin: 0;
 }
 
+/* TAGLINE */
 .tagline {
     font-size: 18px;
     color: #5f6f94;
-    margin-top: 8px;
     margin-bottom: 40px;
 }
 
-/* Sky + clouds */
+/* SKY + CLOUDS */
 .sky {
     position: relative;
     width: 100%;
@@ -126,7 +125,7 @@ body {
     100% { transform: translateX(0); }
 }
 
-/* Globe + airplane */
+/* GLOBE */
 .globe-wrapper {
     position: absolute;
     top: 80px;
@@ -156,7 +155,7 @@ body {
 .globe::before { width: 100px; height: 70px; top: 50px; left: 50px; }
 .globe::after { width: 80px; height: 60px; bottom: 60px; right: 40px; }
 
-/* Airplane orbit */
+/* AIRPLANE ORBIT */
 .plane-orbit {
     position: absolute;
     top: 50%;
@@ -182,26 +181,28 @@ body {
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
 }
-
 </style>
 </head>
 
 <body>
 
+<!-- TOP BAR -->
 <header class="top-bar">
     <button id="menu-toggle" class="menu-button">Let’s travel!!</button>
 </header>
 
+<!-- MENU -->
 <nav id="main-menu" class="menu-panel">
     <ul>
-        <li><a href="#">Map</a></li>
-        <li><a href="#">Bucket List</a></li>
-        <li><a href="#">Travel Diary</a></li>
-        <li><a href="#">City Explorer</a></li>
-        <li><a href="#">Translator</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="bucket.html">Bucket List</a></li>
+        <li><a href="diary.html">Travel Diary</a></li>
+        <li><a href="cities.html">City Explorer</a></li>
+        <li><a href="translator.html">Translator</a></li>
     </ul>
 </nav>
 
+<!-- HERO -->
 <main class="hero">
     <h1 class="logo-title">Sky Atlas</h1>
     <p class="tagline">Discover the world, one city at a time</p>
@@ -221,7 +222,7 @@ body {
 </main>
 
 <script>
-// Toggle menu
+/* MENU TOGGLE */
 const menuToggle = document.getElementById('menu-toggle');
 const mainMenu = document.getElementById('main-menu');
 
