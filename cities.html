@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Sky Atlas — City Explorer</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Poppins;background:linear-gradient(#c7c4ff,#e6e4ff);padding:20px;min-height:100vh}
@@ -27,7 +26,6 @@ img{width:100%;border-radius:16px;margin:15px 0}
 .close{float:right;font-size:26px;color:#ff5c8a;background:none;border:none;cursor:pointer}
 </style>
 </head>
-
 <body>
 
 <div class="home" onclick="location.href='index.html'">🏠</div>
@@ -37,76 +35,96 @@ img{width:100%;border-radius:16px;margin:15px 0}
 <div id="panel"></div>
 
 <script>
-/* COMPRESSED CITY DATABASE — 30 cities */
-const C={
-"Paris":{f:"🇫🇷",c:"France",cat:["Romantic","Aesthetic"],i:"https://upload.wikimedia.org/wikipedia/commons/e/e6/Paris_Night.jpg",s:["Eiffel Tower","Louvre","Montmartre"],e:["Croissants","Macarons"],fun:["River cruise","Vintage shops"],p:["Trocadéro","Pont Alexandre III"],r:["Luxembourg Gardens"],cu:"Romance, art, cafés.",o:"Trench coat + boots",h:"Loose waves",w:"Mild, layered outfits",m:"Paris"},
-"Tokyo":{f:"🇯🇵",c:"Japan",cat:["Futuristic","Foodie"],i:"https://upload.wikimedia.org/wikipedia/commons/1/12/Tokyo_Tower_and_around_Skyscrapers.jpg",s:["Shibuya","Senso-ji"],e:["Sushi","Ramen"],fun:["Arcades","Karaoke"],p:["Shinjuku skyline"],r:["Shinjuku Gyoen"],cu:"Tradition + neon future.",o:"Oversized sweater",h:"Straight glossy hair",w:"4 seasons",m:"Tokyo"},
-"Seoul":{f:"🇰🇷",c:"South Korea",cat:["Trendy","Nightlife"],i:"https://upload.wikimedia.org/wikipedia/commons/6/6e/Seoul_skyline.jpg",s:["Gyeongbokgung","N Seoul Tower"],e:["BBQ","Tteokbokki"],fun:["Hongdae","K-pop shops"],p:["Bukchon"],r:["Hangang"],cu:"Trendy, stylish, youthful.",o:"Pastels + skirts",h:"Korean waves",w:"Cold winters",m:"Seoul"},
-"London":{f:"🇬🇧",c:"UK",cat:["Historic","Cozy"],i:"https://upload.wikimedia.org/wikipedia/commons/c/cd/London_Montage_L.jpg",s:["Big Ben","Tower Bridge"],e:["Fish & chips"],fun:["West End"],p:["Notting Hill"],r:["Hyde Park"],cu:"Royal, rainy, diverse.",o:"Coat + scarf",h:"Messy bun",w:"Rainy",m:"London"},
-"NYC":{f:"🇺🇸",c:"USA",cat:["Urban","Nightlife"],i:"https://upload.wikimedia.org/wikipedia/commons/4/4d/Manhattan_skyline.jpg",s:["Times Square","Central Park"],e:["Bagels","Pizza"],fun:["Broadway"],p:["Brooklyn Bridge"],r:["Bryant Park"],cu:"Fast, iconic, bold.",o:"Black jeans + leather jacket",h:"High pony",w:"Extreme seasons",m:"New York"},
-"Barcelona":{f:"🇪🇸",c:"Spain",cat:["Beachy","Artistic"],i:"https://upload.wikimedia.org/wikipedia/commons/7/79/Barcelona_collage.JPG",s:["Sagrada Família"],e:["Tapas"],fun:["Beach bars"],p:["Park Güell"],r:["Ciutadella"],cu:"Sunny + artistic.",o:"Flowy dress",h:"Beach waves",w:"Warm",m:"Barcelona"},
-"Rome":{f:"🇮🇹",c:"Italy",cat:["Historic","Romantic"],i:"https://upload.wikimedia.org/wikipedia/commons/7/7e/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg",s:["Colosseum"],e:["Pasta","Gelato"],fun:["Trastevere"],p:["Trevi"],r:["Villa Borghese"],cu:"Ancient + charming.",o:"Midi skirts",h:"Soft curls",w:"Warm",m:"Rome"},
-"Dubai":{f:"🇦🇪",c:"UAE",cat:["Luxury","Desert"],i:"https://upload.wikimedia.org/wikipedia/commons/9/9f/Dubai_skyline_2015.jpg",s:["Burj Khalifa"],e:["Shawarma"],fun:["Desert safari"],p:["Marina"],r:["Jumeirah"],cu:"Modern + glam.",o:"Light fabrics",h:"Sleek pony",w:"Hot",m:"Dubai"},
-"Amsterdam":{f:"🇳🇱",c:"Netherlands",cat:["Cozy","Canals"],i:"https://upload.wikimedia.org/wikipedia/commons/6/6c/Amsterdam_Canals.jpg",s:["Canals"],e:["Stroopwafels"],fun:["Bike rides"],p:["Bridges"],r:["Vondelpark"],cu:"Chill + artsy.",o:"Sweater + jeans",h:"Low bun",w:"Cool",m:"Amsterdam"},
-"Kyoto":{f:"🇯🇵",c:"Japan",cat:["Traditional","Calm"],i:"https://upload.wikimedia.org/wikipedia/commons/6/6e/Kiyomizu-dera_in_Kyoto.jpg",s:["Fushimi Inari"],e:["Matcha"],fun:["Tea houses"],p:["Bamboo forest"],r:["Temple gardens"],cu:"Quiet + spiritual.",o:"Earth tones",h:"Braids",w:"Seasonal",m:"Kyoto"},
-"Lisbon":{f:"🇵🇹",c:"Portugal",cat:["Sunny","Coastal"],i:"https://upload.wikimedia.org/wikipedia/commons/c/c6/Lisbon_Montage_2016.png",s:["Belém Tower"],e:["Seafood"],fun:["Tram rides"],p:["Tile streets"],r:["Cascais"],cu:"Warm + musical.",o:"Linen outfits",h:"Windproof pony",w:"Mild",m:"Lisbon"},
-"Bali":{f:"🇮🇩",c:"Indonesia",cat:["Beach","Tropical"],i:"https://upload.wikimedia.org/wikipedia/commons/9/9e/Pura_Ulun_Danu_Bratan%2C_2022.jpg",s:["Rice terraces"],e:["Fruit bowls"],fun:["Surfing"],p:["Waterfalls"],r:["Spas"],cu:"Relaxed + spiritual.",o:"Flowy fits",h:"Braids",w:"Humid",m:"Bali"},
-"Santorini":{f:"🇬🇷",c:"Greece",cat:["Romantic","Aesthetic"],i:"https://upload.wikimedia.org/wikipedia/commons/5/5f/Santorini_Thira.jpg",s:["Oia"],e:["Seafood"],fun:["Boat tours"],p:["Blue domes"],r:["Terraces"],cu:"Dreamy island.",o:"White dresses",h:"Loose curls",w:"Hot",m:"Santorini"},
-"Sydney":{f:"🇦🇺",c:"Australia",cat:["Beach","Urban"],i:"https://upload.wikimedia.org/wikipedia/commons/b/b0/Sydney_Opera_House_Sails.jpg",s:["Opera House"],e:["Brunch"],fun:["Surfing"],p:["Bondi"],r:["Harbour parks"],cu:"Sunny + outdoorsy.",o:"Shorts + tees",h:"Beach waves",w:"Warm",m:"Sydney"},
-"Cape Town":{f:"🇿🇦",c:"South Africa",cat:["Scenic","Adventure"],i:"https://upload.wikimedia.org/wikipedia/commons/a/af/Table_Mountain_from_Bloubergstrand.jpg",s:["Table Mountain"],e:["Seafood"],fun:["Hiking"],p:["Bo-Kaap"],r:["Camps Bay"],cu:"Nature + culture.",o:"Activewear",h:"Protective styles",w:"Windy",m:"Cape Town"},
-"Prague":{f:"🇨🇿",c:"Czechia",cat:["Fairytale","Cozy"],i:"https://upload.wikimedia.org/wikipedia/commons/a/a6/Prague_Panorama.jpg",s:["Charles Bridge"],e:["Goulash"],fun:["River walks"],p:["Old Town"],r:["Parks"],cu:"Storybook vibes.",o:"Coats + boots",h:"Beanie hair",w:"Cold",m:"Prague"},
-"Vienna":{f:"🇦🇹",c:"Austria",cat:["Elegant","Classical"],i:"https://upload.wikimedia.org/wikipedia/commons/5/5e/Vienna_Collage_2014.png",s:["Schönbrunn"],e:["Schnitzel"],fun:["Opera"],p:["Palaces"],r:["Gardens"],cu:"Royal + musical.",o:"Chic neutrals",h:"Low bun",w:"Cold",m:"Vienna"},
-"Seville":{f:"🇪🇸",c:"Spain",cat:["Sunny","Romantic"],i:"https://upload.wikimedia.org/wikipedia/commons/9/9b/Plaza_de_Espa%C3%B1a_%28Seville%29_02.jpg",s:["Plaza de España"],e:["Tapas"],fun:["Flamenco"],p:["Tile plazas"],r:["Parks"],cu:"Warm + lively.",o:"Light dresses",h:"Waves",w:"Hot",m:"Seville"},
-"Berlin":{f:"🇩🇪",c:"Germany",cat:["Nightlife","Urban"],i:"https://upload.wikimedia.org/wikipedia/commons/a/a6/Berlin_Skyline_Fernsehturm_02.jpg",s:["Brandenburg Gate"],e:["Street food"],fun:["Techno clubs"],p:["East Side Gallery"],r:["Tiergarten"],cu:"Edgy + creative.",o:"Black fits",h:"Sleek hair",w:"Cold",m:"Berlin"},
-"Toronto":{f:"🇨🇦",c:"Canada",cat:["Urban","Multicultural"],i:"https://upload.wikimedia.org/wikipedia/commons/c/c0/Toronto_skyline_2020.jpg",s:["CN Tower"],e:["Poutine"],fun:["Harbourfront"],p:["Graffiti Alley"],r:["Islands"],cu:"Friendly + diverse.",o:"Cozy layers",h:"Beanie",w:"Cold",m:"Toronto"}
+/*
+ULTRA-SHRUNK FORMAT (one line per city):
+"name":"FLAG|Country|cat1,cat2|sight1;sight2;sight3;sight4|food1;food2;food3;food4|fun1;fun2;fun3;fun4|photo1;photo2;photo3;photo4|relax1;relax2;relax3;relax4|culture summary|outfit1;outfit2;outfit3;outfit4|hair1;hair2;hair3|weather vibe|maps query"
+Add as many cities as you want here, alphabetically.
+*/
+const CITY_DATA={
+"Amsterdam":"🇳🇱|Netherlands|Cozy,Canals|Canal belt;Anne Frank House;Rijksmuseum;Jordaan|Stroopwafels;Fries with sauces;Pancakes;Local cafés|Canal cruises;Biking;Markets;Vintage shops|Canal bridges;Narrow houses;Flower markets;Jordaan streets|Vondelpark;Canal-side cafés;Parks;Waterfront benches|Amsterdam feels chill and creative, with bikes, canals, and a relaxed café culture.|Sweater;Trench coat;Straight jeans;Sneakers|Low bun;Ponytail;Natural hair|Cool and often rainy—layers and a light coat.|Amsterdam, Netherlands",
+"Barcelona":"🇪🇸|Spain|Beachy,Artistic|Sagrada Família;Park Güell;Gothic Quarter;Casa Batlló|Tapas;Paella;Churros;Seafood|Beachfront bars;Nightlife;Street performers;Markets|Park Güell views;Barceloneta;Gothic alleys;Rooftops|Ciutadella Park;Beach promenades;Cafés;Plazas|Barcelona is sunny and artistic, mixing Gaudí architecture with relaxed Mediterranean life.|Flowy dress;Linen pants;Sandals;Straw bag|Beach waves;Half-up;Loose curls|Warm Mediterranean weather—light, breathable outfits.|Barcelona, Spain",
+"Berlin":"🇩🇪|Germany|Urban,Nightlife|Brandenburg Gate;East Side Gallery;Museum Island;TV Tower|Street food;Currywurst;Bakeries;Cafés|Techno clubs;Bars;Street art tours;Markets|East Side Gallery;Rooftops;Spree river;Street murals|Tiergarten;Parks;Riverside walks;Cafés|Berlin feels edgy and creative, with history, art, and a big alternative scene.|Black jeans;Oversized jacket;Boots;Graphic tee|Sleek hair;Messy bun;Beanie hair|Cold winters, mild summers—layered streetwear works well.|Berlin, Germany",
+"Kyoto":"🇯🇵|Japan|Traditional,Calm|Fushimi Inari;Kiyomizu-dera;Arashiyama;Gion|Matcha sweets;Kaiseki;Tofu dishes;Tea houses|Kimono rentals;Tea ceremonies;Temple walks;Markets|Torii gates;Bamboo forest;Old streets;Riverside|Temple gardens;Riverside paths;Quiet shrines;Parks|Kyoto is peaceful and traditional, full of temples, gardens, and seasonal beauty.|Soft neutrals;Flowy pants;Simple tops;Comfortable shoes|Low bun;Braids;Straight hair|Four seasons—dress for spring blossoms and autumn leaves.|Kyoto, Japan",
+"Lisbon":"🇵🇹|Portugal|Sunny,Coastal|Belém Tower;Alfama;Tram 28;Miradouros|Pastéis de nata;Seafood;Bacalhau;Cafés|Tram rides;Fado music;Rooftop bars;Markets|Tile streets;Viewpoints;Yellow trams;Riverside|Cascais beaches;Riverside walks;Parks;Cafés|Lisbon is warm and musical, shaped by seafaring history and sunny coastal life.|Linen dress;Light pants;Comfy shoes;Sunglasses|Windproof ponytail;Loose waves;Half-up|Mild, sunny climate—perfect for light layers.|Lisbon, Portugal",
+"London":"🇬🇧|United Kingdom|Historic,Cozy|Big Ben;Tower Bridge;British Museum;Buckingham Palace|Fish & chips;Sunday roast;Tea;Pastries|West End shows;Markets;Pubs;Shopping|Notting Hill;Sky Garden;South Bank;Streetscapes|Hyde Park;Regent's Park;Greenwich;Cafés|London mixes royal history with modern diversity and cozy rainy-day vibes.|Long coat;Scarf;Knit sweater;Chelsea boots|Messy bun;Low pony;Loose waves|Mild and rainy—layers and a good coat are essential.|London, United Kingdom",
+"New York":"🇺🇸|USA|Urban,Iconic|Times Square;Central Park;Brooklyn Bridge;Statue of Liberty (view)|Bagels;Pizza;Food trucks;Chinatown eats|Broadway;SoHo shopping;Rooftop bars;Museums|DUMBO;Top of the Rock;Central Park;Street corners|Bryant Park;Hudson River Park;Central Park lawns;Cafés|New York is fast, loud, and ambitious, with energy at every hour.|Black jeans;Leather jacket;Chunky sneakers;Crossbody bag|High ponytail;Slick bun;Big waves|Cold winters, hot summers—dress for extremes.|New York City, USA",
+"Paris":"🇫🇷|France|Romantic,Aesthetic|Eiffel Tower;Louvre;Montmartre;Seine riverbanks|Croissants;Macarons;Bistros;Wine bars|Seine cruises;Vintage shopping;Cabaret;Cafés|Trocadéro;Pont Alexandre III;Rue Crémieux;Louvre pyramids|Luxembourg Gardens;Tuileries;Canal Saint-Martin;Île Saint-Louis|Paris blends art, fashion, and café culture with a relaxed, romantic rhythm.|Beige trench;Black turtleneck;Straight jeans;Mini bag|Loose waves;Low bun;Sleek ponytail|Mild climate—layering with chic outerwear works best.|Paris, France",
+"Prague":"🇨🇿|Czechia|Fairytale,Cozy|Charles Bridge;Prague Castle;Old Town Square;Astronomical Clock|Goulash;Trdelník;Local beer;Cafés|River cruises;Old town walks;Jazz bars;Markets|Charles Bridge sunrise;Castle views;Old streets;Riverside|Parks;Cafés;Riverside benches;Gardens|Prague feels like a fairytale city with medieval charm and cozy café culture.|Coat;Scarf;Boots;Warm layers|Loose hair;Beanie;Low pony|Cold winters, warm summers—classic European seasons.|Prague, Czech Republic",
+"Rome":"🇮🇹|Italy|Historic,Romantic|Colosseum;Trevi Fountain;Vatican;Piazza Navona|Pasta;Gelato;Espresso;Pizza|Evening walks;Piazzas;Markets;Wine bars|Trevi;Spanish Steps;Streets;Views|Villa Borghese;Cafés;Parks;Terraces|Rome is ancient and lively, with ruins, piazzas, and long, social meals.|Midi skirt;Tailored pants;Simple top;Chic sandals|Soft curls;Low bun;Pinned waves|Warm and sunny much of the year.|Rome, Italy",
+"Seoul":"🇰🇷|South Korea|Trendy,Nightlife|Gyeongbokgung;Bukchon;N Seoul Tower;Myeongdong|Korean BBQ;Tteokbokki;Hotteok;Cafés|Hongdae nightlife;K-pop shops;Photo cafés;Markets|Bukchon rooftops;Cheonggyecheon;Hongdae streets;City views|Hangang parks;Seoul Forest;Cafés;Riverside|Seoul is stylish and fast-paced, rooted in food, community, and modern pop culture.|Pastel cardigan;Tennis skirt;Straight jeans;White sneakers|Korean waves;Half-up;Low pony with bangs|Cold winters, hot summers—layered street style.|Seoul, South Korea",
+"Sydney":"🇦🇺|Australia|Beach,Urban|Opera House;Harbour Bridge;Bondi Beach;Manly|Brunch;Seafood;Flat white;Burgers|Coastal walks;Surfing;Harbour cruises;Bars|Bondi Icebergs;Harbour views;Beaches;Skyline|Beaches;Parks;Harbourfront;Cafés|Sydney is laid-back and outdoorsy, centered around beaches and harbour life.|Shorts;Sundress;Light shirts;Sandals|Beach waves;Ponytail;Messy bun|Mild winters, warm sunny summers.|Sydney, Australia"
 };
 
-/* RENDER LIST */
-function R(f=""){let L=document.getElementById("list");L.innerHTML="";f=f.toLowerCase();
-Object.keys(C).sort().filter(x=>x.toLowerCase().includes(f)||C[x].c.toLowerCase().includes(f))
-.forEach(x=>L.innerHTML+=`<div class='city' onclick="openCity('${x}')"><span>${C[x].f} ${x}</span><small>${C[x].c}</small></div>`);}
-R();
-
-/* SEARCH */
-document.getElementById("search").oninput=e=>R(e.target.value);
-
-/* OPEN PANEL */
-function openCity(n){
-let c=C[n],p=document.getElementById("panel");
-p.innerHTML=`
-<button class='close' onclick='closeP()'>✖</button>
-<div class='title'>${c.f} ${n}</div>
-<div class='country'>${c.c}</div>
-<img src='${c.i}'>
-${c.cat.map(t=>`<span class='tag'>${t}</span>`).join("")}
-<div class='sec'>Weather vibe</div><div class='box'>${c.w}</div>
-<div class='sec'>Best sights</div><div class='box'>${c.s.join(", ")}</div>
-<div class='sec'>Best food</div><div class='box'>${c.e.join(", ")}</div>
-<div class='sec'>Fun things</div><div class='box'>${c.fun.join(", ")}</div>
-<div class='sec'>Photo spots</div><div class='box'>${c.p.join(", ")}</div>
-<div class='sec'>Relax spots</div><div class='box'>${c.r.join(", ")}</div>
-<div class='sec'>Culture</div><div class='box'>${c.cu}</div>
-<div class='sec'>Outfit ideas</div><div class='box'>${c.o}</div>
-<div class='sec'>Hairstyle ideas</div><div class='box'>${c.h}</div>
-<button class='btn map' onclick="openMap('${encodeURIComponent(c.m)}')">🗺 Open in Maps</button>
-<button class='btn bucket' onclick="addBucket('${n}')">⭐ Add to Bucket List</button>`;
-p.style.bottom="0";
+/* expand compressed data */
+function parseCity(str){
+  const [flag,country,cats,sights,food,fun,photos,relax,culture,outfit,hair,weather,maps]=str.split("|");
+  return {
+    flag,
+    country,
+    categories:cats.split(","),
+    sights:sights.split(";"),
+    food:food.split(";"),
+    fun:fun.split(";"),
+    photos:photos.split(";"),
+    relax:relax.split(";"),
+    culture,
+    outfit:outfit.split(";"),
+    hair:hair.split(";"),
+    weather,
+    maps
+  };
 }
 
-/* CLOSE */
+/* build expanded object */
+const C={};
+Object.keys(CITY_DATA).forEach(name=>C[name]=parseCity(CITY_DATA[name]));
+
+/* render list alphabetically */
+function render(filter=""){
+  const L=document.getElementById("list");
+  L.innerHTML="";
+  filter=filter.toLowerCase();
+  Object.keys(C).sort().filter(n=>n.toLowerCase().includes(filter)||C[n].country.toLowerCase().includes(filter))
+  .forEach(n=>{
+    const c=C[n];
+    L.innerHTML+=`<div class="city" onclick="openCity('${n.replace(/'/g,"\\'")}')"><span>${c.flag} ${n}</span><small>${c.country}</small></div>`;
+  });
+}
+render();
+
+/* search */
+document.getElementById("search").oninput=e=>render(e.target.value);
+
+/* open panel */
+function openCity(name){
+  const c=C[name],p=document.getElementById("panel");
+  p.innerHTML=`
+  <button class="close" onclick="closeP()">✖</button>
+  <div class="title">${c.flag} ${name}</div>
+  <div class="country">${c.country}</div>
+  <img src="https://source.unsplash.com/800x500/?${encodeURIComponent(name)}">
+  ${c.categories.map(t=>`<span class="tag">${t}</span>`).join("")}
+  <div class="sec">Weather vibe</div><div class="box">${c.weather}</div>
+  <div class="sec">Best sights</div><div class="box">${c.sights.join(", ")}</div>
+  <div class="sec">Best food</div><div class="box">${c.food.join(", ")}</div>
+  <div class="sec">Fun things</div><div class="box">${c.fun.join(", ")}</div>
+  <div class="sec">Photo spots</div><div class="box">${c.photos.join(", ")}</div>
+  <div class="sec">Relax spots</div><div class="box">${c.relax.join(", ")}</div>
+  <div class="sec">Culture</div><div class="box">${c.culture}</div>
+  <div class="sec">Outfit ideas</div><div class="box">${c.outfit.join(", ")}</div>
+  <div class="sec">Hairstyle ideas</div><div class="box">${c.hair.join(", ")}</div>
+  <button class="btn map" onclick="openMap('${encodeURIComponent(c.maps)}')">🗺 Open in Maps</button>
+  <button class="btn bucket" onclick="addBucket('${name.replace(/'/g,"\\'")}')">⭐ Add to Bucket List</button>`;
+  p.style.bottom="0";
+}
 function closeP(){document.getElementById("panel").style.bottom="-100%"}
-
-/* MAP */
 function openMap(q){open("https://www.google.com/maps/search/?api=1&query="+q)}
-
-/* BUCKET */
 function addBucket(n){
-let b=JSON.parse(localStorage.getItem("bucketList")||"[]");
-b.push({text:"🌍 "+n,checked:false});
-localStorage.setItem("bucketList",JSON.stringify(b));
-alert(n+" added!");
+  let b=JSON.parse(localStorage.getItem("bucketList")||"[]");
+  b.push({text:"🌍 "+n,checked:false});
+  localStorage.setItem("bucketList",JSON.stringify(b));
+  alert(n+" added!");
 }
 </script>
-
 </body>
 </html>
