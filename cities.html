@@ -2,133 +2,86 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Sky Atlas — City Explorer</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+<title>City Explorer</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Poppins;background:linear-gradient(#c7c4ff,#e6e4ff);padding:20px;min-height:100vh}
-.home{position:fixed;top:15px;left:15px;background:#e3c9ff;padding:12px;border-radius:50%;font-size:22px;cursor:pointer;z-index:99}
-h1{text-align:center;margin-top:60px;font-size:46px;font-family:'Great Vibes';color:#3b2f63}
-input{width:100%;padding:14px;border:none;border-radius:14px;font-size:17px;box-shadow:0 4px 12px #0002;margin:20px auto;max-width:600px;display:block}
-#list{max-width:600px;margin:0 auto}
-.city{width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:14px;background:#dcd7ff;font-size:17px;display:flex;justify-content:space-between;cursor:pointer}
-#panel{position:fixed;bottom:-100%;left:0;width:100%;height:85vh;background:#fffefeee;border-radius:25px 25px 0 0;box-shadow:0 -6px 20px #0003;padding:20px;overflow-y:auto;transition:.4s;z-index:999}
-.flag{font-size:30px;margin-right:8px}
-.title{font-size:26px;font-weight:600;color:#3b2f63}
-.country{font-size:14px;color:#7a6a9a}
-img{width:100%;border-radius:16px;margin:15px 0}
-.tag{background:#f4f1ff;padding:4px 10px;border-radius:999px;font-size:12px;margin:3px;display:inline-block}
-.sec{font-weight:600;margin-top:12px;color:#4a3b6b}
-.box{background:#f4f1ff;padding:10px;border-radius:12px;font-size:14px;margin-bottom:8px}
-.btn{width:100%;padding:12px;border:none;border-radius:14px;font-size:16px;font-weight:600;margin-top:10px;cursor:pointer}
-.map{background:#bcd6ff;color:#23406b}
-.bucket{background:#e3c9ff;color:#4a3b6b}
-.close{float:right;font-size:26px;color:#ff5c8a;background:none;border:none;cursor:pointer}
+body {font-family: Arial; margin:0; background:#f5f5f5;}
+#search {width:90%; margin:20px auto; display:block; padding:12px; font-size:18px;}
+#list {padding:20px;}
+.city {background:white; padding:15px; margin-bottom:10px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between;}
+.city:hover {background:#eee;}
+#panel {position:fixed; bottom:-100%; left:0; width:100%; height:90%; background:white; border-radius:20px 20px 0 0; padding:20px; overflow-y:auto; transition:0.4s;}
+.close {float:right; font-size:22px; background:none; border:none; cursor:pointer;}
+.title {font-size:28px; font-weight:bold;}
+.country {color:#777; margin-bottom:10px;}
+img {width:100%; border-radius:10px; margin:15px 0;}
+.tag {background:#222; color:white; padding:5px 10px; border-radius:20px; margin-right:5px; display:inline-block; margin-top:10px;}
+.sec {margin-top:20px; font-weight:bold;}
+.box {background:#f0f0f0; padding:10px; border-radius:8px; margin-top:5px;}
+.btn {width:100%; padding:15px; margin-top:15px; border:none; border-radius:10px; font-size:18px; cursor:pointer;}
+.map {background:#0078ff; color:white;}
+.bucket {background:#ffcc00;}
 </style>
 </head>
 <body>
 
-<div class="home" onclick="location.href='index.html'">🏠</div>
-<h1>City Explorer</h1>
-<input id="search" placeholder="Search for a city…">
+<input id="search" placeholder="Search cities...">
 <div id="list"></div>
+
 <div id="panel"></div>
- <script>
-/*  
-CITY DATA WILL BE INSERTED INSIDE THIS OBJECT  
-*/
+
+<script>
 const CITY_DATA = {
 
-   "Abu Dhabi":"🇦🇪|United Arab Emirates|Luxury,Modern|Sheikh Zayed Mosque;Corniche;Louvre Abu Dhabi;Emirates Palace|Shawarma;Mezze;Dates;Arabic coffee|Desert tours;Malls;Beach clubs;Marina walks|Mosque courtyard;Corniche sunset;Marina skyline;Heritage Village|Corniche parks;Beaches;Resorts;Cafés|A blend of Gulf tradition and modern luxury.|Light fabrics;Modest outfits;Sandals;Linen|Sleek pony;Braids;Low bun|Very hot—light clothing essential.|Abu Dhabi|Plane;Car;Bus;Taxi|6–8h intl;1–2h UAE;Local buses;Short taxi rides",
-"Abuja":"🇳🇬|Nigeria|Modern,Green|Aso Rock;Millennium Park;National Mosque;Jabi Lake|Jollof rice;Suya;Pounded yam;Pepper soup|Markets;Boat rides;Nightlife;Cultural centers|Aso Rock views;City skyline;Jabi Lake;Parks|Gardens;Lakeside;Cafés;Green spaces|A calm, planned capital with diverse cultures.|Light outfits;Bright colors;Comfy shoes;Casual wear|Braids;Ponytail;Natural styles|Warm tropical climate.|Abuja|Plane;Car;Bus;Taxi|1–2h domestic;Drives regionally;Local buses;Taxis",
-"Accra":"🇬🇭|Ghana|Coastal,Cultural|Independence Square;Labadi Beach;Jamestown;Kwame Nkrumah Museum|Jollof;Kelewele;Banku;Fresh seafood|Beaches;Markets;Nightlife;Live music|Jamestown murals;Beaches;Old forts;Street scenes|Beaches;Cafés;Parks;Coastal walks|A lively coastal city with music, art, and warm culture.|Light dresses;Shorts;Sandals;Bright prints|Braids;Twists;Ponytail|Hot and humid.|Accra|Plane;Car;Bus;Taxi|1–2h domestic;Regional drives;Local buses;Taxis",
-"Addis Ababa":"🇪🇹|Ethiopia|Historic,Highland|National Museum;Holy Trinity;Entoto;Merkato|Injera;Doro wat;Coffee;Tibs|Markets;Museums;Cafés;Cultural shows|City views;Churches;Museums;Streets|Parks;Cafés;Hills;Gardens|A cultural hub with deep history and famous coffee traditions.|Layered outfits;Light jackets;Comfy shoes;Neutrals|Braids;Natural hair;Low bun|Cool highland climate.|Addis Ababa|Plane;Car;Bus;Taxi|Domestic flights;Regional drives;Local buses;Taxis",
-"Algiers":"🇩🇿|Algeria|Mediterranean,Historic|Casbah;Notre Dame d’Afrique;Botanical Garden;Martyrs’ Memorial|Couscous;Brik;Mint tea;Seafood|Markets;Cafés;Museums;Seaside walks|White buildings;Harbor;Casbah alleys;Monuments|Gardens;Seaside;Cafés;Parks|A blend of French and North African heritage.|Light layers;Flowy outfits;Sandals;Scarves|Loose waves;Low bun;Covered styles|Warm Mediterranean.|Algiers|Plane;Car;Bus;Tram|1–2h domestic;Regional drives;Local transit;Trams",
-"Amman":"🇯🇴|Jordan|Historic,Desert|Citadel;Roman Theater;Rainbow Street;King Abdullah Mosque|Falafel;Mansaf;Kunafa;Tea|Souks;Cafés;Museums;Desert tours|Citadel views;Old streets;Mosques;City overlooks|Cafés;Parks;Terraces;Desert edges|A mix of ancient history and modern Middle Eastern life.|Light layers;Long skirts;Sandals;Scarves|Loose waves;Low bun;Covered styles|Hot summers, cool winters.|Amman|Plane;Car;Bus;Taxi|3–5h regional;Drives from nearby;Local buses;Taxis",
-"Amsterdam":"🇳🇱|Netherlands|Cozy,Canals|Canal belt;Anne Frank House;Rijksmuseum;Jordaan|Stroopwafels;Fries;Pancakes;Cafés|Canal cruises;Biking;Markets;Vintage shops|Canal bridges;Flower markets;Jordaan;Narrow houses|Vondelpark;Cafés;Canal benches;Parks|Chill, creative, and bike‑friendly.|Sweater;Trench coat;Jeans;Sneakers|Low bun;Ponytail;Natural hair|Cool and rainy.|Amsterdam|Train;Car;Plane;Boat|3–5h EU;4–6h drive;1–2h flights;River boats",
-"Athens":"🇬🇷|Greece|Historic,Sunny|Acropolis;Plaka;Temple of Zeus;Monastiraki|Gyros;Souvlaki;Baklava;Seafood|Markets;Beaches;Nightlife;Museums|Acropolis views;Streets;Beaches;Rooftops|Beaches;Cafés;Parks;Squares|Ancient history meets modern Mediterranean life.|Flowy dress;Sandals;Linen;Light tops|Loose curls;Half‑up;Beach waves|Hot summers, mild winters.|Athens|Plane;Ferry;Car;Metro|2–3h EU;Island ferries;Drives;Fast metro",
-"Auckland":"🇳🇿|New Zealand|Coastal,Urban|Sky Tower;Harbour;Waiheke;Mount Eden|Seafood;Coffee;Pastries;Burgers|Boat tours;Beaches;Hikes;Markets|Harbour views;Beaches;City skyline;Mount Eden|Beaches;Parks;Trails;Cafés|A relaxed coastal city with Māori and modern culture.|Light layers;Shorts;Sneakers;Sundress|Beach waves;Ponytail;Messy bun|Mild maritime climate.|Auckland|Plane;Ferry;Car;Bus|Long‑haul intl;Island ferries;Drives;Local buses",
-"Baghdad":"🇮🇶|Iraq|Historic,Cultural|Al-Mustansiriya;Tigris River;Mutanabbi Street;Museums|Kebabs;Dolma;Tea;Flatbreads|Markets;Cafés;Riverside walks;Cultural sites|Tigris views;Old streets;Mosques;Markets|Parks;Cafés;Riverside;Gardens|A city with deep history and literary culture.|Modest outfits;Light layers;Scarves;Sandals|Low bun;Covered styles;Braids|Very hot summers.|Baghdad|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Bangkok":"🇹🇭|Thailand|Nightlife,Foodie|Grand Palace;Wat Arun;Wat Pho;Khao San|Pad Thai;Mango sticky rice;Curry;Street food|Night markets;Boat rides;Bars;Shopping|Temples;Riverside;Markets;City lights|Parks;Cafés;Riverside;Spas|Energetic, flavorful, and full of life.|Light outfits;Shorts;Sandals;Loose tops|Ponytail;Braids;Messy bun|Hot and humid.|Bangkok|Plane;Boat;Train;Taxi|6–12h intl;Canal boats;Trains;Taxis",
-"Barcelona":"🇪🇸|Spain|Beachy,Artistic|Sagrada Família;Park Güell;Gothic Quarter;Casa Batlló|Tapas;Paella;Churros;Seafood|Beach bars;Nightlife;Markets;Street shows|Park Güell;Barceloneta;Alleys;Rooftops|Parks;Beaches;Cafés;Promenades|Sunny, artistic, Mediterranean.|Flowy dress;Linen;Sandals;Straw bag|Beach waves;Loose curls;Half‑up|Warm Mediterranean.|Barcelona|Train;Car;Plane;Boat|3–6h EU;4–8h drive;1–3h flights;Ferries",
-"Beijing":"🇨🇳|China|Historic,Modern|Great Wall;Forbidden City;Tiananmen;Summer Palace|Dumplings;Peking duck;Noodles;Tea|Hutongs;Parks;Museums;Shopping|Great Wall views;Palaces;Hutongs;City skyline|Parks;Gardens;Cafés;Lakes|Ancient imperial culture meets modern power.|Coats;Layers;Sneakers;Casual wear|Straight hair;Low pony;Braids|Cold winters, hot summers.|Beijing|Plane;Train;Subway;Car|2–4h domestic;High‑speed trains;Metro;Drives",
-"Beirut":"🇱🇧|Lebanon|Coastal,Cultural|Raouche Rocks;Downtown;Pigeon Rocks;Museums|Hummus;Tabbouleh;Baklava;Seafood|Nightlife;Beaches;Cafés;Markets|Seaside;Streets;Harbor;Old town|Beaches;Cafés;Parks;Promenades|A resilient, artistic, Mediterranean city.|Light outfits;Jeans;Sandals;Layers|Loose waves;Ponytail;Braids|Warm Mediterranean.|Beirut|Plane;Car;Bus;Taxi|1–2h regional;Drives;Local buses;Taxis",
-"Belgrade":"🇷🇸|Serbia|Nightlife,Historic|Kalemegdan;Skadarlija;St. Sava;Rivers|Ćevapi;Burek;Pastries;Coffee|Clubs;Bars;Boat parties;Markets|Riverside;Fortress;Old streets;Squares|Parks;Cafés;Riverbanks;Gardens|A lively Balkan city with deep history.|Jeans;Jackets;Boots;Casual chic|Loose hair;Ponytail;Waves|Cold winters, warm summers.|Belgrade|Plane;Bus;Car;Train|1–2h regional;Drives;Buses;Trains",
-"Berlin":"🇩🇪|Germany|Urban,Nightlife|Brandenburg Gate;East Side Gallery;Museum Island;TV Tower|Street food;Currywurst;Bakeries;Cafés|Techno clubs;Bars;Street art;Markets|East Side Gallery;Spree;Rooftops;Murals|Parks;Cafés;Riverbanks;Gardens|Edgy, creative, historic.|Black fits;Jackets;Boots;Layers|Sleek hair;Messy bun;Beanie|Cold winters, mild summers.|Berlin|Train;Plane;Car;Bus|2–6h EU;1–3h flights;Drives;Buses",
-"Bogotá":"🇨🇴|Colombia|Highland,Cultural|Monserrate;La Candelaria;Gold Museum;Botero Museum|Arepas;Ajiaco;Empanadas;Coffee|Markets;Museums;Nightlife;Street art|City views;Old streets;Murals;Plazas|Parks;Cafés;Gardens;Squares|A vibrant Andean capital with art and history.|Jackets;Jeans;Sneakers;Layers|Loose hair;Ponytail;Braids|Cool highland climate.|Bogotá|Plane;Bus;Car;Taxi|1–2h domestic;Long buses;Drives;Taxis",
-"Boston":"🇺🇸|USA|Historic,Coastal|Freedom Trail;Harbor;MIT;Harvard|Clam chowder;Lobster rolls;Bagels;Coffee|Museums;Boat tours;Markets;Sports|Harbor views;Campuses;Old streets;Parks|Parks;Cafés;Waterfront;Gardens|A blend of academia, history, and coastal charm.|Coats;Sweaters;Jeans;Boots|Loose waves;Ponytail;Beanie|Cold winters, warm summers.|Boston|Plane;Train;Car;Subway|1–3h domestic;Amtrak;Drives;Metro",
-"Brussels":"🇧🇪|Belgium|Historic,Cozy|Grand Place;Atomium;Royal Palace;Manneken Pis|Waffles;Fries;Chocolate;Beer|Museums;Cafés;Markets;Parks|Grand Place;Alleys;Murals;Squares|Parks;Cafés;Gardens;Terraces|A multilingual capital with European charm.|Coats;Scarves;Jeans;Boots|Loose hair;Low bun;Waves|Cool and rainy.|Brussels|Train;Plane;Car;Tram|1–2h EU;Drives;Flights;Trams",
-"Budapest":"🇭🇺|Hungary|Romantic,Thermal|Parliament;Buda Castle;Fisherman’s Bastion;Thermal Baths|Goulash;Pastries;Soups;Wine|Thermal spas;Nightlife;Cruises;Markets|Parliament views;Bastion;Bridges;Riverside|Baths;Parks;Cafés;Gardens|A romantic city with thermal culture and grand architecture.|Coats;Dresses;Boots;Layers|Loose curls;Low bun;Waves|Cold winters, warm summers.|Budapest|Train;Plane;Car;Bus|2–6h EU;Flights;Drives;Buses",
-"Buenos Aires":"🇦🇷|Argentina|Cultural,Urban|La Boca;Recoleta;Obelisk;Palermo|Steak;Empanadas;Dulce de leche;Wine|Tango;Nightlife;Markets;Cafés|Colorful streets;Plazas;Murals;Parks|Parks;Cafés;Gardens;Terraces|A passionate, artistic Latin American capital.|Dresses;Jeans;Light layers;Sneakers|Loose hair;Ponytail;Waves|Warm summers, mild winters.|Buenos Aires|Plane;Bus;Car;Taxi|Long‑haul intl;Regional buses;Drives;Taxis",
-"Cairo":"🇪🇬|Egypt|Historic,Desert|Pyramids;Sphinx;Egyptian Museum;Khan el‑Khalili|Koshari;Falafel;Tea;Grilled meats|Markets;Museums;Boat rides;Cafés|Pyramids;Nile views;Old streets;Mosques|Cafés;Parks;Riverside;Gardens|Ancient wonders meet modern Middle Eastern life.|Light layers;Modest outfits;Sandals;Scarves|Braids;Low bun;Covered styles|Very hot summers.|Cairo|Plane;Car;Bus;Taxi|3–5h regional;Drives;Buses;Taxis"
-"Casablanca":"🇲🇦|Morocco|Coastal,Modern|Hassan II Mosque;Corniche;Old Medina;Squares|Tagine;Couscous;Mint tea;Seafood|Markets;Cafés;Beaches;Shopping|Mosque;Corniche;Old streets;Harbor|Beaches;Cafés;Parks;Promenades|A modern Moroccan city with French influence.|Light layers;Flowy outfits;Sandals;Scarves|Loose waves;Low bun;Covered styles|Warm coastal climate.|Casablanca|Plane;Car;Train;Taxi|3–5h regional;Drives;Trains;Taxis",
-"Chicago":"🇺🇸|USA|Urban,Architecture|Millennium Park;Willis Tower;Navy Pier;Riverwalk|Deep dish pizza;Hot dogs;BBQ;Coffee|Museums;Boat tours;Shopping;Sports|Skyline;Riverwalk;Beaches;Parks|Parks;Cafés;Beaches;Gardens|A bold city of architecture, food, and lake views.|Coats;Jeans;Sneakers;Layers|Ponytail;Waves;Beanie|Cold winters, warm summers.|Chicago|Plane;Train;Car;Metro|1–4h domestic;Amtrak;Drives;CTA",
-"Copenhagen":"🇩🇰|Denmark|Cozy,Scenic|Nyhavn;Little Mermaid;Tivoli;Rosenborg|Pastries;Seafood;Smørrebrød;Coffee|Biking;Cafés;Parks;Harbor walks|Nyhavn;Harbor;Castles;Streets|Parks;Cafés;Gardens;Harbors|A clean, stylish, bike‑friendly Nordic capital.|Coats;Scarves;Sweaters;Boots|Low bun;Straight hair;Beanie|Cool Nordic climate.|Copenhagen|Plane;Train;Bike;Metro|1–3h EU;Drives;Bikes;Metro",
-"Doha":"🇶🇦|Qatar|Luxury,Modern|Corniche;Souq Waqif;Museum of Islamic Art;The Pearl|Shawarma;Grills;Dates;Tea|Malls;Beaches;Desert tours;Cafés|Corniche;Skyline;Souq;Marina|Beaches;Cafés;Resorts;Parks|A futuristic Gulf city with luxury and tradition.|Light fabrics;Modest outfits;Sandals;Linen|Sleek pony;Braids;Low bun|Very hot desert climate.|Doha|Plane;Car;Taxi;Metro|6–10h intl;Local metro;Taxis",
-"Dubai":"🇦🇪|United Arab Emirates|Luxury,Futuristic|Burj Khalifa;Palm;Dubai Mall;Marina|Shawarma;Grills;Dates;Desserts|Malls;Beaches;Boat rides;Nightlife|Burj Khalifa;Marina;Palm;Desert|Beaches;Cafés;Resorts;Parks|A glamorous, futuristic desert metropolis.|Light fabrics;Modest outfits;Sandals;Linen|Sleek pony;Braids;Low bun|Very hot desert climate.|Dubai|Plane;Car;Taxi;Metro|6–10h intl;Local metro;Taxis",
-"Dublin":"🇮🇪|Ireland|Cozy,Historic|Temple Bar;Trinity College;Castles;Parks|Stew;Fish and chips;Pastries;Beer|Pubs;Museums;Parks;Music|Streets;Pubs;Parks;River|Parks;Cafés;Gardens;Pubs|A friendly, historic, pub‑filled capital.|Coats;Sweaters;Jeans;Boots|Loose hair;Waves;Beanie|Cool and rainy.|Dublin|Plane;Train;Bus;Car|1–3h EU;Drives;Buses;Trains",
-"Edinburgh":"🇬🇧|Scotland|Historic,Scenic|Castle;Royal Mile;Arthur’s Seat;Old Town|Haggis;Pies;Pastries;Tea|Hiking;Museums;Pubs;Tours|Castle views;Streets;Hills;Old Town|Parks;Cafés;Gardens;Hills|A dramatic, historic Scottish capital.|Coats;Scarves;Boots;Layers|Loose curls;Low bun;Beanie|Cool and windy.|Edinburgh|Plane;Train;Bus;Car|1–4h UK;Drives;Trains;Buses",
-"Frankfurt":"🇩🇪|Germany|Modern,Financial|Römer;Skyline;Museums;River Main|Sausages;Pretzels;Pastries;Beer|Museums;Cafés;Shopping;Walks|Skyline;River;Old Town;Parks|Parks;Cafés;Gardens;Riverside|A modern financial hub with old‑town charm.|Coats;Jeans;Sneakers;Layers|Straight hair;Low bun;Waves|Mild climate.|Frankfurt|Plane;Train;Car;Tram|1–3h EU;ICE trains;Drives;Trams",
-"Geneva":"🇨🇭|Switzerland|Scenic,Lakeside|Jet d’Eau;Old Town;UN;Lake Geneva|Fondue;Chocolate;Pastries;Coffee|Boat rides;Parks;Museums;Shopping|Lake views;Mountains;Old streets;Parks|Parks;Cafés;Gardens;Lakeside|A peaceful, international lakeside city.|Coats;Sweaters;Boots;Layers|Loose hair;Low bun;Waves|Cool alpine climate.|Geneva|Plane;Train;Car;Tram|1–3h EU;Trains;Drives;Trams",
-"Hanoi":"🇻🇳|Vietnam|Historic,Street Food|Old Quarter;Hoan Kiem;Temple of Literature;Museums|Pho;Banh mi;Coffee;Noodles|Markets;Street food;Lakes;Museums|Old Quarter;Lakes;Streets;Temples|Lakes;Cafés;Parks;Gardens|A lively, historic city full of street food.|Light outfits;Sandals;Loose tops;Shorts|Ponytail;Braids;Messy bun|Warm, humid climate.|Hanoi|Plane;Train;Car;Taxi|3–6h regional;Trains;Drives;Taxis",
-"Harare":"🇿🇼|Zimbabwe|Green,Urban|Botanical Gardens;Museums;Parks;Markets|Sadza;Stews;BBQ;Tea|Markets;Parks;Cafés;Museums|Gardens;Streets;Parks;Monuments|Parks;Cafés;Gardens;Markets|A calm, green African capital.|Light outfits;Casual wear;Sneakers;Layers|Braids;Ponytail;Natural styles|Warm climate.|Harare|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Havana":"🇨🇺|Cuba|Colorful,Historic|Old Havana;Malecon;Castillo;Squares|Cuban sandwiches;Seafood;Coffee;Pastries|Music;Dancing;Beaches;Markets|Colorful streets;Cars;Beaches;Squares|Beaches;Cafés;Parks;Gardens|A vibrant, colorful Caribbean capital.|Flowy dress;Sandals;Light tops;Shorts|Loose curls;Ponytail;Braids|Warm tropical climate.|Havana|Plane;Car;Taxi;Bus|Long‑haul intl;Drives;Taxis;Buses",
-"Helsinki":"🇫🇮|Finland|Nordic,Calm|Cathedral;Market Square;Islands;Museums|Salmon;Pastries;Coffee;Soups|Saunas;Parks;Cafés;Ferries|Harbor;Islands;Streets;Parks|Parks;Cafés;Gardens;Saunas|A clean, calm Nordic capital.|Coats;Scarves;Sweaters;Boots|Straight hair;Low bun;Beanie|Cold winters.|Helsinki|Plane;Ferry;Tram;Train|1–3h EU;Ferries;Trams;Trains",
-"Ho Chi Minh City":"🇻🇳|Vietnam|Busy,Foodie|Ben Thanh;Notre Dame;War Museum;Riverside|Pho;Banh xeo;Coffee;Seafood|Markets;Nightlife;Street food;Museums|Streets;Markets;Riverside;Temples|Cafés;Parks;Gardens;Markets|A fast, energetic southern Vietnamese city.|Light outfits;Shorts;Sandals;Loose tops|Ponytail;Braids;Messy bun|Hot and humid.|Ho Chi Minh City|Plane;Car;Taxi;Bus|3–6h regional;Drives;Taxis;Buses",
-"Hong Kong":"🇭🇰|China|Skyscrapers,Foodie|Victoria Peak;Harbor;Mong Kok;Temples|Dim sum;Noodles;Tea;Seafood|Shopping;Night markets;Hikes;Boat rides|Skyline;Harbor;Streets;Mountains|Parks;Cafés;Gardens;Harbor|A dense, vibrant, skyscraper city.|Light layers;Sneakers;Casual wear;Jackets|Straight hair;Ponytail;Waves|Humid subtropical.|Hong Kong|Plane;Ferry;Train;Taxi|Long‑haul intl;MTR;Ferries;Taxis",
-"Houston":"🇺🇸|USA|Urban,Space|NASA;Museums;Parks;Downtown|BBQ;Tex‑Mex;Burgers;Coffee|Museums;Parks;Shopping;Sports|Skyline;Parks;Streets;Museums|Parks;Cafés;Gardens;Trails|A diverse, sprawling Texas city.|Light layers;Jeans;Sneakers;Casual wear|Ponytail;Waves;Straight hair|Hot summers.|Houston|Plane;Car;Bus;Taxi|1–4h domestic;Drives;Buses;Taxis"
-"Jakarta":"🇮🇩|Indonesia|Busy,Urban|Monas;Old Town;Ancol;Museums|Noodles;Satay;Rice dishes;Coffee|Markets;Malls;Nightlife;Museums|Streets;Harbor;Old Town;Parks|Cafés;Parks;Gardens;Malls|A dense, energetic Southeast Asian megacity.|Light outfits;Sandals;Loose tops;Shorts|Ponytail;Braids;Messy bun|Hot and humid.|Jakarta|Plane;Car;Bus;Taxi|3–6h regional;Drives;Buses;Taxis",
-"Johannesburg":"🇿🇦|South Africa|Urban,Cultural|Apartheid Museum;Constitution Hill;Markets;Parks|Braai;Stews;Pastries;Coffee|Museums;Markets;Nightlife;Tours|City views;Streets;Parks;Markets|Parks;Cafés;Gardens;Malls|A vibrant African city with deep history.|Light layers;Jeans;Sneakers;Casual wear|Braids;Ponytail;Natural styles|Warm climate.|Johannesburg|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Jerusalem":"🇮🇱|Israel|Historic,Spiritual|Old City;Western Wall;Dome of the Rock;Mount of Olives|Falafel;Hummus;Pastries;Tea|Markets;Museums;Holy sites;Walks|Old City;Streets;Mountains;Markets|Parks;Cafés;Gardens;Terraces|A sacred city with thousands of years of history.|Modest outfits;Light layers;Comfortable shoes|Low bun;Covered styles;Braids|Warm Mediterranean.|Jerusalem|Plane;Car;Bus;Taxi|Regional drives;Buses;Taxis",
-"Karachi":"🇵🇰|Pakistan|Coastal,Urban|Clifton Beach;Mazar‑e‑Quaid;Markets;Museums|Biryani;Kebabs;Tea;Bread|Markets;Beaches;Museums;Cafés|Beaches;Streets;Markets;Monuments|Beaches;Cafés;Parks;Gardens|A huge coastal city full of culture and food.|Light layers;Modest outfits;Sandals|Braids;Low bun;Covered styles|Hot and humid.|Karachi|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Kuala Lumpur":"🇲🇾|Malaysia|Skyscrapers,Foodie|Petronas Towers;Batu Caves;Markets;Parks|Noodles;Rice dishes;Satay;Tea|Night markets;Shopping;Museums;Parks|Towers;Streets;Caves;Parks|Parks;Cafés;Gardens;Malls|A modern, multicultural Southeast Asian capital.|Light outfits;Sneakers;Loose tops;Shorts|Ponytail;Braids;Messy bun|Hot and humid.|Kuala Lumpur|Plane;Train;Car;Taxi|3–6h regional;Trains;Drives;Taxis",
-"Lagos":"🇳🇬|Nigeria|Busy,Coastal|Lekki;Victoria Island;Markets;Beaches|Jollof;Suya;Seafood;Snacks|Beaches;Nightlife;Markets;Music|Beaches;Streets;Markets;Skyline|Beaches;Cafés;Parks;Gardens|A lively, energetic West African megacity.|Light outfits;Bright colors;Sneakers;Casual wear|Braids;Twists;Ponytail|Hot and humid.|Lagos|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Lahore":"🇵🇰|Pakistan|Historic,Cultural|Badshahi Mosque;Fort;Food Street;Gardens|Biryani;Kebabs;Tea;Bread|Food streets;Markets;Museums;Parks|Mosques;Streets;Gardens;Fort|Parks;Cafés;Gardens;Markets|A historic city known for food and culture.|Modest outfits;Light layers;Sandals|Braids;Low bun;Covered styles|Warm climate.|Lahore|Plane;Car;Bus;Taxi|Regional drives;Buses;Taxis",
-"Lisbon":"🇵🇹|Portugal|Sunny,Coastal|Belém Tower;Alfama;Tram 28;Castelo|Seafood;Pastries;Wine;Coffee|Trams;Beaches;Markets;Walks|Streets;Trams;Beaches;Viewpoints|Beaches;Cafés;Parks;Gardens|A bright, hilly, coastal European capital.|Flowy dress;Sandals;Linen;Light tops|Loose curls;Beach waves;Half‑up|Warm Mediterranean.|Lisbon|Plane;Train;Car;Tram|2–4h EU;Trains;Drives;Trams",
-"London":"🇬🇧|UK|Historic,Urban|Big Ben;London Eye;Buckingham;Tower Bridge|Fish and chips;Tea;Pastries;Curry|Museums;Parks;Markets;Shows|Bridges;Parks;Streets;Skyline|Parks;Cafés;Gardens;Markets|A global city of history, culture, and style.|Coats;Scarves;Boots;Layers|Loose hair;Low bun;Beanie|Cool and rainy.|London|Plane;Train;Tube;Bus|1–3h EU;Underground;Trains;Buses",
-"Los Angeles":"🇺🇸|USA|Beachy,Hollywood|Hollywood;Santa Monica;Griffith;Venice|Burgers;Tacos;Bowls;Coffee|Beaches;Hikes;Shopping;Nightlife|Beaches;Hills;Streets;Piers|Beaches;Cafés;Parks;Gardens|A sunny, sprawling city of beaches and film.|Light outfits;Sneakers;Sunglasses;Casual wear|Beach waves;Ponytail;Messy bun|Warm, dry climate.|Los Angeles|Plane;Car;Bus;Metro|1–5h domestic;Drives;Metro;Buses",
-"Madrid":"🇪🇸|Spain|Sunny,Artistic|Royal Palace;Retiro;Prado;Gran Vía|Tapas;Paella;Churros;Wine|Museums;Parks;Nightlife;Markets|Streets;Parks;Squares;Rooftops|Parks;Cafés;Gardens;Terraces|A lively, sunny Spanish capital.|Flowy dress;Linen;Sandals;Light tops|Loose curls;Waves;Half‑up|Warm Mediterranean.|Madrid|Plane;Train;Car;Metro|2–4h EU;Trains;Drives;Metro",
-"Manila":"🇵🇭|Philippines|Busy,Coastal|Intramuros;Rizal Park;Baywalk;Markets|Adobo;Noodles;Seafood;Snacks|Markets;Nightlife;Beaches;Museums|Baywalk;Streets;Parks;Old Town|Beaches;Cafés;Parks;Gardens|A lively, coastal Southeast Asian capital.|Light outfits;Sandals;Loose tops;Shorts|Ponytail;Braids;Messy bun|Hot and humid.|Manila|Plane;Car;Bus;Taxi|3–6h regional;Drives;Buses;Taxis",
-"Melbourne":"🇦🇺|Australia|Artistic,Cool|Laneways;Beaches;Parks;Museums|Coffee;Pastries;Seafood;Burgers|Cafés;Beaches;Markets;Sports|Laneways;Beaches;Parks;Skyline|Parks;Cafés;Gardens;Beaches|A stylish, artsy Australian city.|Light layers;Sneakers;Casual wear;Jackets|Loose hair;Ponytail;Waves|Mild ocean climate.|Melbourne|Plane;Tram;Train;Car|Long‑haul intl;Trams;Trains;Drives",
-"Mexico City":"🇲🇽|Mexico|Historic,Foodie|Zócalo;Chapultepec;Frida Museum;Pyramids|Tacos;Tamales;Churros;Coffee|Markets;Museums;Nightlife;Parks|Streets;Parks;Murals;Squares|Parks;Cafés;Gardens;Markets|A massive, cultural, food‑rich capital.|Light layers;Sneakers;Casual wear;Jackets|Loose hair;Ponytail;Braids|Mild highland climate.|Mexico City|Plane;Car;Bus;Metro|Long‑haul intl;Drives;Metro;Buses",
-"Miami":"🇺🇸|USA|Beachy,Party|South Beach;Wynwood;Little Havana;Bayside|Seafood;Cuban food;Coffee;Desserts|Beaches;Nightlife;Shopping;Boat rides|Beaches;Murals;Streets;Harbor|Beaches;Cafés;Parks;Gardens|A sunny, colorful, tropical U.S. city.|Swimwear;Shorts;Sandals;Light tops|Beach waves;Ponytail;Braids|Hot and humid.|Miami|Plane;Car;Bus;Taxi|1–4h domestic;Drives;Buses;Taxis",
-"Milan":"🇮🇹|Italy|Fashion,Historic|Duomo;Galleria;Sforza;Navigli|Pasta;Pizza;Pastries;Coffee|Shopping;Museums;Cafés;Walks|Duomo;Streets;Canals;Parks|Parks;Cafés;Gardens;Squares|A stylish Italian capital of fashion and design.|Chic outfits;Coats;Boots;Layers|Sleek hair;Low bun;Waves|Mild climate.|Milan|Plane;Train;Car;Tram|2–4h EU;Trains;Drives;Trams"
-"Nairobi":"🇰🇪|Kenya|Wildlife,Urban|Nairobi Park;Giraffe Centre;Karen Blixen;Markets|Nyama choma;Stews;Tea;Snacks|Safaris;Markets;Museums;Cafés|Wildlife;Parks;Streets;Markets|Parks;Cafés;Gardens;Reserves|A unique city where wildlife meets urban life.|Light layers;Sneakers;Casual wear;Jackets|Braids;Ponytail;Natural styles|Mild climate.|Nairobi|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"New Delhi":"🇮🇳|India|Historic,Bustling|Red Fort;India Gate;Lotus Temple;Markets|Curry;Chaat;Tea;Bread|Markets;Temples;Museums;Street food|Streets;Temples;Markets;Gardens|Parks;Cafés;Gardens;Markets|A vibrant, historic Indian capital.|Light layers;Modest outfits;Sandals|Braids;Low bun;Covered styles|Hot summers.|New Delhi|Plane;Car;Bus;Metro|Regional flights;Drives;Metro;Buses",
-"New York":"🇺🇸|USA|Urban,Iconic|Times Square;Central Park;Statue of Liberty;Brooklyn Bridge|Pizza;Bagels;Coffee;Street food|Museums;Parks;Shopping;Nightlife|Skyline;Parks;Streets;Bridges|Parks;Cafés;Gardens;Riverside|A fast, iconic global city.|Coats;Sneakers;Jeans;Layers|Loose hair;Ponytail;Beanie|Cold winters, warm summers.|New York|Plane;Subway;Car;Bus|Long‑haul intl;Subway;Buses;Drives",
-"Oslo":"🇳🇴|Norway|Nordic,Scenic|Opera House;Vigeland;Museums;Fjords|Seafood;Pastries;Coffee;Soups|Fjords;Parks;Museums;Walks|Harbor;Parks;Streets;Fjords|Parks;Cafés;Gardens;Harbors|A clean, calm Nordic capital.|Coats;Scarves;Boots;Layers|Straight hair;Low bun;Beanie|Cold winters.|Oslo|Plane;Train;Ferry;Tram|1–3h EU;Trains;Ferries;Trams",
-"Osaka":"🇯🇵|Japan|Foodie,Urban|Osaka Castle;Dotonbori;Aquarium;Umeda|Takoyaki;Okonomiyaki;Ramen;Tea|Street food;Shopping;Museums;Parks|Dotonbori;Castle;Streets;Parks|Parks;Cafés;Gardens;Markets|A fun, food‑obsessed Japanese city.|Light layers;Sneakers;Casual wear|Straight hair;Ponytail;Braids|Mild climate.|Osaka|Plane;Train;Metro;Car|Regional flights;Shinkansen;Metro;Drives",
-"Osaka":"🇯🇵|Japan|Foodie,Urban|Osaka Castle;Dotonbori;Aquarium;Umeda|Takoyaki;Okonomiyaki;Ramen;Tea|Street food;Shopping;Museums;Parks|Dotonbori;Castle;Streets;Parks|Parks;Cafés;Gardens;Markets|A fun, food‑obsessed Japanese city.|Light layers;Sneakers;Casual wear|Straight hair;Ponytail;Braids|Mild climate.|Osaka|Plane;Train;Metro;Car|Regional flights;Shinkansen;Metro;Drives",
-"Paris":"🇫🇷|France|Romantic,Artistic|Eiffel Tower;Louvre;Notre‑Dame;Montmartre|Pastries;Wine;Cheese;Coffee|Museums;Cafés;Shopping;Walks|Eiffel Tower;Streets;Bridges;Parks|Parks;Cafés;Gardens;Squares|A romantic, iconic European capital.|Chic outfits;Coats;Boots;Scarves|Loose curls;Low bun;Waves|Mild climate.|Paris|Plane;Train;Metro;Car|2–4h EU;Metro;Trains;Drives",
-"Perth":"🇦🇺|Australia|Sunny,Coastal|Beaches;Kings Park;Fremantle;Harbor|Seafood;Coffee;Pastries;Burgers|Beaches;Parks;Markets;Boat rides|Beaches;Parks;Harbor;Streets|Beaches;Cafés;Gardens;Parks|A sunny, relaxed Australian city.|Light outfits;Shorts;Sandals;Sunglasses|Beach waves;Ponytail;Messy bun|Warm, dry climate.|Perth|Plane;Car;Bus;Train|Long‑haul intl;Drives;Trains;Buses",
-"Prague":"🇨🇿|Czechia|Fairytale,Historic|Charles Bridge;Castle;Old Town;Astronomical Clock|Pastries;Soups;Beer;Coffee|Museums;Parks;Walks;Markets|Bridges;Castle;Streets;Squares|Parks;Cafés;Gardens;Terraces|A fairytale‑like European capital.|Coats;Scarves;Boots;Layers|Loose curls;Low bun;Waves|Cold winters.|Prague|Plane;Train;Car;Tram|2–6h EU;Trains;Drives;Trams",
-"Quito":"🇪🇨|Ecuador|Highland,Historic|Old Town;Basilica;TelefériQo;Equator|Soups;Corn dishes;Coffee;Pastries|Markets;Museums;Parks;Walks|Mountains;Streets;Old Town;Parks|Parks;Cafés;Gardens;Squares|A high‑altitude city with colonial charm.|Light layers;Sneakers;Jackets;Casual wear|Loose hair;Ponytail;Braids|Cool highland climate.|Quito|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Reykjavik":"🇮🇸|Iceland|Nordic,Nature|Hallgrímskirkja;Harbor;Blue Lagoon;Museums|Seafood;Soups;Pastries;Coffee|Hot springs;Tours;Museums;Walks|Harbor;Mountains;Streets;Lagoons|Parks;Cafés;Gardens;Hot springs|A small, scenic Nordic capital.|Coats;Scarves;Boots;Layers|Loose hair;Beanie;Braids|Cold climate.|Reykjavik|Plane;Car;Bus;Taxi|Long‑haul intl;Drives;Buses;Taxis",
-"Rio de Janeiro":"🇧🇷|Brazil|Beachy,Scenic|Christ the Redeemer;Sugarloaf;Copacabana;Lapa|BBQ;Seafood;Snacks;Coffee|Beaches;Nightlife;Hikes;Markets|Beaches;Mountains;Streets;Parks|Beaches;Cafés;Gardens;Trails|A lively, scenic Brazilian city.|Swimwear;Shorts;Sandals;Light tops|Beach waves;Ponytail;Braids|Warm tropical climate.|Rio de Janeiro|Plane;Car;Bus;Taxi|Long‑haul intl;Drives;Buses;Taxis",
-"Rome":"🇮🇹|Italy|Historic,Romantic|Colosseum;Vatican;Trevi;Pantheon|Pasta;Pizza;Gelato;Coffee|Museums;Parks;Walks;Markets|Streets;Ruins;Parks;Squares|Parks;Cafés;Gardens;Terraces|A historic, romantic Italian capital.|Flowy dress;Sandals;Linen;Light tops|Loose curls;Waves;Half‑up|Warm Mediterranean.|Rome|Plane;Train;Car;Metro|2–4h EU;Trains;Drives;Metro",
-"Seoul":"🇰🇷|South Korea|Modern,Trendy|Palaces;Myeongdong;Gangnam;N Seoul Tower|BBQ;Noodles;Street food;Tea|Shopping;Nightlife;Cafés;Parks|Streets;Towers;Parks;Markets|Parks;Cafés;Gardens;Malls|A stylish, fast, modern Asian capital.|Trendy outfits;Sneakers;Layers;Jackets|Straight hair;Ponytail;Braids|Cold winters, humid summers.|Seoul|Plane;Subway;Car;Bus|Long‑haul intl;Subway;Buses;Drives",
-"Shanghai":"🇨🇳|China|Skyscrapers,Historic|Bund;Yu Garden;Pudong;Temples|Dumplings;Noodles;Tea;Seafood|Shopping;Nightlife;Museums;Walks|Skyline;Gardens;Streets;Riverside|Parks;Cafés;Gardens;Malls|A futuristic yet historic Chinese megacity.|Light layers;Sneakers;Casual wear|Straight hair;Ponytail;Braids|Humid subtropical.|Shanghai|Plane;Train;Metro;Car|Long‑haul intl;High‑speed trains;Metro;Drives",
-"Singapore":"🇸🇬|Singapore|Clean,Modern|Marina Bay;Gardens by the Bay;Sentosa;Chinatown|Noodles;Rice dishes;Seafood;Tea|Night markets;Shopping;Parks;Walks|Gardens;Skyline;Streets;Harbor|Parks;Cafés;Gardens;Malls|A clean, modern, multicultural city‑state.|Light outfits;Sneakers;Loose tops;Shorts|Ponytail;Braids;Messy bun|Hot and humid.|Singapore|Plane;Metro;Car;Taxi|Long‑haul intl;MRT;Taxis;Drives",
-"Sydney":"🇦🇺|Australia|Beachy,Scenic|Opera House;Harbour Bridge;Bondi;Parks|Seafood;Coffee;Pastries;Burgers|Beaches;Hikes;Markets;Boat rides|Beaches;Harbor;Parks;Streets|Beaches;Cafés;Gardens;Parks|A sunny, scenic Australian city.|Light outfits;Shorts;Sandals;Sunglasses|Beach waves;Ponytail;Messy bun|Warm coastal climate.|Sydney|Plane;Car;Bus;Train|Long‑haul intl;Drives;Trains;Buses"
- "Taipei":"🇹🇼|Taiwan|Modern,Foodie|Taipei 101;Shilin Market;Temples;Elephant Mountain|Noodles;Tea;Street food;Dumplings|Night markets;Hikes;Museums;Shopping|Skyline;Markets;Temples;Mountains|Parks;Cafés;Gardens;Markets|A friendly, modern Asian city with great food.|Light layers;Sneakers;Casual wear|Ponytail;Straight hair;Braids|Humid subtropical.|Taipei|Plane;Metro;Car;Bus|Long‑haul intl;MRT;Buses;Drives",
-"Tehran":"🇮🇷|Iran|Historic,Mountain|Golestan Palace;Milad Tower;Grand Bazaar;Mountains|Kebabs;Rice dishes;Tea;Bread|Bazaars;Museums;Parks;Cafés|Mountains;Streets;Palaces;Parks|Parks;Cafés;Gardens;Mountains|A historic city with mountain views and deep culture.|Modest outfits;Light layers;Scarves|Covered styles;Braids;Low bun|Dry climate.|Tehran|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Tokyo":"🇯🇵|Japan|Futuristic,Traditional|Shibuya;Asakusa;Skytree;Shinjuku|Sushi;Ramen;Tea;Street food|Shopping;Arcades;Parks;Museums|Streets;Temples;Skyscrapers;Parks|Parks;Cafés;Gardens;Markets|A futuristic yet traditional Japanese megacity.|Trendy outfits;Sneakers;Layers|Straight hair;Ponytail;Braids|Humid subtropical.|Tokyo|Plane;Train;Metro;Car|Long‑haul intl;Shinkansen;Metro;Drives",
-"Toronto":"🇨🇦|Canada|Urban,Multicultural|CN Tower;Harborfront;Museums;Parks|Poutine;Burgers;Coffee;Pastries|Museums;Parks;Shopping;Sports|Skyline;Harbor;Streets;Parks|Parks;Cafés;Gardens;Lakeside|A diverse, modern Canadian city.|Coats;Sneakers;Jeans;Layers|Loose hair;Ponytail;Beanie|Cold winters.|Toronto|Plane;Car;Bus;Subway|Long‑haul intl;Drives;Subway;Buses",
-"Tripoli":"🇱🇾|Libya|Historic,Coastal|Red Castle;Old City;Markets;Harbor|Couscous;Grills;Tea;Bread|Markets;Cafés;Walks;Museums|Old streets;Harbor;Markets;Squares|Parks;Cafés;Gardens;Seaside|A coastal North African city with history.|Modest outfits;Light layers;Sandals|Braids;Low bun;Covered styles|Warm Mediterranean.|Tripoli|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Tunis":"🇹🇳|Tunisia|Coastal,Historic|Medina;Bardo Museum;Carthage;Sidi Bou Said|Couscous;Brik;Seafood;Tea|Markets;Beaches;Museums;Cafés|Blue‑white streets;Beaches;Ruins;Markets|Beaches;Cafés;Parks;Gardens|A bright Mediterranean city with ancient ruins.|Light layers;Flowy outfits;Sandals|Loose waves;Low bun;Covered styles|Warm Mediterranean.|Tunis|Plane;Car;Bus;Taxi|Regional flights;Drives;Buses;Taxis",
-"Vancouver":"🇨🇦|Canada|Nature,Urban|Stanley Park;Gastown;Granville;Mountains|Seafood;Coffee;Pastries;Burgers|Hikes;Parks;Beaches;Markets|Mountains;Beaches;Parks;Streets|Parks;Cafés;Gardens;Trails|A scenic Canadian city between mountains and sea.|Light layers;Sneakers;Jackets|Loose hair;Ponytail;Waves|Mild rainy climate.|Vancouver|Plane;Car;Bus;Train|Long‑haul intl;Drives;SkyTrain;Buses",
-"Vienna":"🇦🇹|Austria|Elegant,Historic|Schönbrunn;Opera;St. Stephen’s;Museums|Pastries;Coffee;Soups;Wine|Museums;Parks;Cafés;Walks|Palaces;Streets;Parks;Squares|Parks;Cafés;Gardens;Terraces|A refined European capital of music and art.|Coats;Scarves;Boots;Layers|Loose curls;Low bun;Waves|Cold winters.|Vienna|Plane;Train;Car;Tram|2–6h EU;Trains;Drives;Trams",
-"Vilnius":"🇱🇹|Lithuania|Cozy,Historic|Old Town;Castle;Cathedral;Hill of Three Crosses|Soups;Pastries;Coffee;Meat dishes|Parks;Museums;Cafés;Walks|Old Town;Streets;Parks;Hills|Parks;Cafés;Gardens;Squares|A charming Baltic capital.|Coats;Sweaters;Boots;Layers|Loose hair;Low bun;Beanie|Cold winters.|Vilnius|Plane;Car;Bus;Train|Regional flights;Drives;Buses;Trains",
-"Warsaw":"🇵🇱|Poland|Rebuilt,Historic|Old Town;Palace of Culture;Łazienki;Museums|Pierogi;Soups;Pastries;Coffee|Museums;Parks;Cafés;Walks|Old Town;Streets;Parks;Squares|Parks;Cafés;Gardens;Terraces|A resilient, historic European capital.|Coats;Scarves;Boots;Layers|Loose curls;Low bun;Waves|Cold winters.|Warsaw|Plane;Train;Car;Tram|2–6h EU;Trains;Drives;Trams",
-"Washington D.C.":"🇺🇸|USA|Monuments,Historic|White House;Capitol;Monuments;Museums|Burgers;Coffee;Seafood;Pastries|Museums;Parks;Walks;Tours|Monuments;Streets;Parks;Riverside|Parks;Cafés;Gardens;Squares|A political and historic U.S. capital.|Coats;Sneakers;Jeans;Layers|Loose hair;Ponytail;Beanie|Cold winters, warm summers.|Washington D.C.|Plane;Metro;Car;Bus|Domestic flights;Metro;Buses;Drives",
-"Wellington":"🇳🇿|New Zealand|Windy,Coastal|Te Papa;Cable Car;Harbor;Mount Victoria|Seafood;Coffee;Pastries;Burgers|Beaches;Parks;Museums;Walks|Harbor;Hills;Streets;Parks|Parks;Cafés;Gardens;Beaches|A windy, artsy coastal capital.|Light layers;Sneakers;Jackets|Loose hair;Ponytail;Waves|Windy maritime climate.|Wellington|Plane;Car;Bus;Ferry|Long‑haul intl;Drives;Buses;Ferries",
-"Zagreb":"🇭🇷|Croatia|Cozy,Historic|Cathedral;Old Town;Parks;Museums|Pastries;Soups;Coffee;Meat dishes|Parks;Museums;Cafés;Walks|Old Town;Streets;Parks;Squares|Parks;Cafés;Gardens;Terraces|A charming Central European capital.|Coats;Scarves;Boots;Layers|Loose curls;Low bun;Waves|Cold winters.|Zagreb|Plane;Train;Car;Tram|Regional flights;Trains;Drives;Trams",
-"Zurich":"🇨🇭|Switzerland|Clean,Scenic|Lake Zurich;Old Town;Bahnhofstrasse;Uetliberg|Chocolate;Fondue;Pastries;Coffee|Parks;Museums;Walks;Shopping|Lake;Mountains;Streets;Parks|Parks;Cafés;Gardens;Lakeside|A clean, scenic Swiss city.|Coats;Sweaters;Boots;Layers|Loose hair;Low bun;Waves|Cool alpine climate.|Zurich|Plane;Train;Car;Tram|1–3h EU;Trains;Drives;Trams"
-  
+"New York":"🇺🇸|USA|Urban|Times Square;Central Park;Statue of Liberty|Pizza;Bagels|Museums;Shopping|Skyline;Parks|Parks;Cafés|Iconic|Casual|Ponytail|Cold|New York|Plane;Subway|Intl flights;Metro",
+"London":"🇬🇧|UK|Historic|Big Ben;London Eye;Buckingham|Tea;Fish & chips|Museums;Parks|Bridges;Parks|Parks;Cafés|Historic|Coats|Low bun|Rainy|London|Plane;Tube|Intl flights;Tube",
+"Paris":"🇫🇷|France|Romantic|Eiffel Tower;Louvre;Notre‑Dame|Pastries;Wine|Cafés;Museums|Eiffel;Streets|Parks;Cafés|Romantic|Chic|Waves|Mild|Paris|Plane;Metro|Intl flights;Metro",
+"Tokyo":"🇯🇵|Japan|Futuristic|Shibuya;Asakusa;Skytree|Sushi;Ramen|Shopping;Arcades|Streets;Temples|Parks;Cafés|Modern|Trendy|Straight|Humid|Tokyo|Plane;Metro|Intl flights;Metro",
+"Dubai":"🇦🇪|UAE|Luxury|Burj Khalifa;Palm;Marina|Shawarma;Dates|Malls;Beaches|Skyline;Desert|Beaches;Cafés|Luxury|Light fabrics|Sleek pony|Hot|Dubai|Plane;Metro|Intl flights;Metro",
+"Singapore":"🇸🇬|Singapore|Clean|Marina Bay;Gardens;Sentosa|Noodles;Seafood|Night markets;Parks|Gardens;Skyline|Parks;Cafés|Clean|Light outfits|Ponytail|Humid|Singapore|Plane;MRT|Intl flights;MRT",
+"Hong Kong":"🇭🇰|China|Skyscrapers|Victoria Peak;Harbor;Mong Kok|Dim sum;Noodles|Shopping;Hikes|Skyline;Harbor|Parks;Cafés|Vibrant|Light layers|Straight|Humid|Hong Kong|Plane;MTR|Intl flights;MTR",
+"Seoul":"🇰🇷|South Korea|Trendy|Myeongdong;Palaces;Gangnam|BBQ;Street food|Shopping;Cafés|Towers;Streets|Parks;Cafés|Trendy|Layers|Straight|Cold|Seoul|Plane;Subway|Intl flights;Subway",
+"Bangkok":"🇹🇭|Thailand|Foodie|Grand Palace;Wat Arun;Khao San|Pad Thai;Curry|Night markets;Bars|Temples;Riverside|Parks;Cafés|Energetic|Light outfits|Braids|Hot|Bangkok|Plane;Taxi|Intl flights;Taxi",
+"Beijing":"🇨🇳|China|Historic|Great Wall;Forbidden City|Dumplings;Duck|Museums;Parks|Wall;Palaces|Parks;Cafés|Historic|Layers|Straight|Cold|Beijing|Plane;Metro|High‑speed trains",
 
-};
+"Shanghai":"🇨🇳|China|Modern|Bund;Pudong;Yu Garden|Noodles;Seafood|Shopping;Nightlife|Skyline;Gardens|Parks;Cafés|Futuristic|Light layers|Straight|Humid|Shanghai|Plane;Metro|High‑speed trains",
+"Delhi":"🇮🇳|India|Historic|Red Fort;India Gate;Lotus Temple|Curry;Chaat|Markets;Temples|Streets;Gardens|Parks;Cafés|Vibrant|Light layers|Braids|Hot|Delhi|Plane;Metro|Domestic flights",
+"Mumbai":"🇮🇳|India|Coastal|Gateway;Marine Drive|Street food;Curry|Markets;Beaches|Beaches;Streets|Parks;Cafés|Busy|Light outfits|Braids|Humid|Mumbai|Plane;Train|Domestic flights",
+"Jakarta":"🇮🇩|Indonesia|Urban|Monas;Old Town|Noodles;Satay|Markets;Malls|Streets;Harbor|Cafés;Parks|Dense|Light outfits|Ponytail|Humid|Jakarta|Plane;Taxi|Regional flights",
+"Manila":"🇵🇭|Philippines|Coastal|Intramuros;Baywalk|Adobo;Seafood|Markets;Nightlife|Bay;Streets|Parks;Cafés|Lively|Light outfits|Braids|Hot|Manila|Plane;Taxi|Regional flights",
 
-/* parse compressed city string */
+"Sydney":"🇦🇺|Australia|Beachy|Opera House;Harbour Bridge|Seafood;Coffee|Beaches;Hikes|Beaches;Harbor|Parks;Cafés|Sunny|Light outfits|Beach waves|Warm|Sydney|Plane;Train|Intl flights",
+"Melbourne":"🇦🇺|Australia|Artistic|Laneways;Parks;Museums|Coffee;Pastries|Cafés;Markets|Laneways;Parks|Cafés;Gardens|Artsy|Layers|Loose hair|Mild|Melbourne|Plane;Tram|Intl flights",
+"Toronto":"🇨🇦|Canada|Urban|CN Tower;Harborfront|Poutine;Coffee|Museums;Parks|Skyline;Harbor|Parks;Cafés|Multicultural|Coats|Ponytail|Cold|Toronto|Plane;Subway|Intl flights",
+"Vancouver":"🇨🇦|Canada|Nature|Stanley Park;Gastown|Seafood;Coffee|Hikes;Beaches|Mountains;Beaches|Parks;Cafés|Scenic|Layers|Waves|Rainy|Vancouver|Plane;SkyTrain|Intl flights",
+"Montreal":"🇨🇦|Canada|Historic|Old Port;Mount Royal|Bagels;Poutine|Cafés;Parks|Old streets;Parks|Cafés;Gardens|European vibe|Coats|Loose hair|Cold|Montreal|Plane;Metro|Intl flights",
+
+"Los Angeles":"🇺🇸|USA|Beachy|Hollywood;Santa Monica|Tacos;Burgers|Beaches;Hikes|Beaches;Hills|Parks;Cafés|Sunny|Light outfits|Beach waves|Warm|Los Angeles|Plane;Car|Domestic flights",
+"San Francisco":"🇺🇸|USA|Tech|Golden Gate;Pier 39|Seafood;Coffee|Tech tours;Parks|Bridge;Hills|Parks;Cafés|Foggy|Layers|Messy bun|Cool|San Francisco|Plane;BART|Domestic flights",
+"Chicago":"🇺🇸|USA|Architecture|Millennium Park;Riverwalk|Pizza;BBQ|Museums;Sports|Skyline;Parks|Parks;Cafés|Bold|Coats|Ponytail|Cold|Chicago|Plane;Metro|Domestic flights",
+"Miami":"🇺🇸|USA|Party|South Beach;Wynwood|Seafood;Cuban food|Beaches;Nightlife|Beaches;Murals|Parks;Cafés|Tropical|Swimwear|Beach waves|Hot|Miami|Plane;Car|Domestic flights",
+"Washington D.C.":"🇺🇸|USA|Historic|White House;Capitol|Burgers;Coffee|Museums;Parks|Monuments;Parks|Parks;Cafés|Political|Coats|Ponytail|Cold|Washington D.C.|Plane;Metro|Domestic flights",
+
+"Mexico City":"🇲🇽|Mexico|Cultural|Zócalo;Chapultepec|Tacos;Tamales|Markets;Museums|Streets;Parks|Parks;Cafés|Massive|Light layers|Braids|Mild|Mexico City|Plane;Metro|Intl flights",
+"Rio de Janeiro":"🇧🇷|Brazil|Beachy|Christ;Sugarloaf|BBQ;Seafood|Beaches;Nightlife|Beaches;Mountains|Parks;Cafés|Scenic|Swimwear|Beach waves|Hot|Rio|Plane;Taxi|Intl flights",
+"São Paulo":"🇧🇷|Brazil|Urban|Avenida Paulista;Ibirapuera|BBQ;Coffee|Nightlife;Shopping|Skyline;Parks|Parks;Cafés|Huge|Light outfits|Ponytail|Warm|São Paulo|Plane;Metro|Intl flights",
+"Buenos Aires":"🇦🇷|Argentina|Cultural|La Boca;Recoleta|Steak;Empanadas|Tango;Markets|Colorful streets|Parks;Cafés|Artistic|Light layers|Loose hair|Mild|Buenos Aires|Plane;Taxi|Intl flights",
+"Santiago":"🇨🇱|Chile|Mountain|San Cristobal;Plaza de Armas|Seafood;Wine|Parks;Museums|Mountains;Streets|Parks;Cafés|Calm|Layers|Ponytail|Mild|Santiago|Plane;Metro|Intl flights",
+
+"Cape Town":"🇿🇦|South Africa|Scenic|Table Mountain;Waterfront|Seafood;BBQ|Beaches;Hikes|Mountains;Beaches|Parks;Cafés|Beautiful|Light layers|Waves|Mild|Cape Town|Plane;Car|Intl flights",
+"Johannesburg":"🇿🇦|South Africa|Urban|Apartheid Museum;Constitution Hill|Braai;Stews|Markets;Museums|Streets;Parks|Parks;Cafés|Cultural|Light layers|Braids|Warm|Johannesburg|Plane;Taxi|Domestic flights",
+"Nairobi":"🇰🇪|Kenya|Wildlife|Nairobi Park;Giraffe Centre|Nyama choma;Stews|Safaris;Markets|Wildlife;Parks|Parks;Cafés|Unique|Light layers|Natural|Mild|Nairobi|Plane;Taxi|Regional flights",
+"Lagos":"🇳🇬|Nigeria|Coastal|Lekki;VI|Jollof;Suya|Beaches;Nightlife|Beaches;Streets|Parks;Cafés|Energetic|Bright outfits|Braids|Hot|Lagos|Plane;Taxi|Regional flights",
+"Cairo":"🇪🇬|Egypt|Historic|Pyramids;Sphinx|Koshari;Falafel|Markets;Museums|Pyramids;Nile|Cafés;Parks|Ancient|Light layers|Braids|Hot|Cairo|Plane;Taxi|Regional flights",
+
+"Istanbul":"🇹🇷|Türkiye|Historic|Hagia Sophia;Blue Mosque|Kebabs;Baklava|Bazaars;Boat rides|Mosques;Bosphorus|Parks;Cafés|East‑meets‑West|Modest outfits|Low bun|Mild|Istanbul|Plane;Tram|Intl flights",
+"Athens":"🇬🇷|Greece|Ancient|Acropolis;Plaka|Gyros;Souvlaki|Markets;Beaches|Acropolis;Streets|Parks;Cafés|Historic|Linen|Waves|Warm|Athens|Plane;Metro|Intl flights"
+
+}; // END OF 50 CITIES
+
+
+
+// ------------------ SCRIPT LOGIC ------------------
+
 function parseCity(str){
   const [flag,country,cats,sights,food,fun,photos,relax,culture,outfit,hair,weather,maps,transport,durations] = str.split("|");
   return {
@@ -150,11 +103,9 @@ function parseCity(str){
   };
 }
 
-/* expand all cities */
 const C = {};
 Object.keys(CITY_DATA).forEach(n => C[n] = parseCity(CITY_DATA[n]));
 
-/* render list */
 function render(f=""){
   const L = document.getElementById("list");
   L.innerHTML = "";
@@ -173,52 +124,46 @@ function render(f=""){
 }
 render();
 
-/* search */
 document.getElementById("search").oninput = e => render(e.target.value);
 
-/* open panel */
 function openCity(name){
   const c = C[name];
   const p = document.getElementById("panel");
-  const transportRows = c.transport.map((t,i) => `${t}: ${c.durations[i] || ""}`).join(" • ");
+  const transportRows = c.transport.map((t,i)=>`${t}: ${c.durations[i]||""}`).join(" • ");
 
   p.innerHTML = `
     <button class="close" onclick="closeP()">✖</button>
     <div class="title">${c.flag} ${name}</div>
     <div class="country">${c.country}</div>
     <img src="https://source.unsplash.com/800x500/?${encodeURIComponent(name)}">
-    ${c.categories.map(t => `<span class="tag">${t}</span>`).join("")}
-    <div class="sec">Weather vibe</div><div class="box">${c.weather}</div>
-    <div class="sec">Best sights</div><div class="box">${c.sights.join(", ")}</div>
-    <div class="sec">Best food</div><div class="box">${c.food.join(", ")}</div>
-    <div class="sec">Fun things</div><div class="box">${c.fun.join(", ")}</div>
-    <div class="sec">Photo spots</div><div class="box">${c.photos.join(", ")}</div>
-    <div class="sec">Relax spots</div><div class="box">${c.relax.join(", ")}</div>
+    ${c.categories.map(t=>`<span class="tag">${t}</span>`).join("")}
+    <div class="sec">Weather</div><div class="box">${c.weather}</div>
+    <div class="sec">Sights</div><div class="box">${c.sights.join(", ")}</div>
+    <div class="sec">Food</div><div class="box">${c.food.join(", ")}</div>
+    <div class="sec">Fun</div><div class="box">${c.fun.join(", ")}</div>
+    <div class="sec">Photos</div><div class="box">${c.photos.join(", ")}</div>
+    <div class="sec">Relax</div><div class="box">${c.relax.join(", ")}</div>
     <div class="sec">Culture</div><div class="box">${c.culture}</div>
-    <div class="sec">Outfit ideas</div><div class="box">${c.outfit.join(", ")}</div>
-    <div class="sec">Hairstyle ideas</div><div class="box">${c.hair.join(", ")}</div>
-    <div class="sec">How to get there</div><div class="box">${transportRows}</div>
+    <div class="sec">Outfit</div><div class="box">${c.outfit.join(", ")}</div>
+    <div class="sec">Hair</div><div class="box">${c.hair.join(", ")}</div>
+    <div class="sec">Transport</div><div class="box">${transportRows}</div>
     <button class="btn map" onclick="openMap('${encodeURIComponent(c.maps)}')">🗺 Open in Maps</button>
     <button class="btn bucket" onclick="addBucket('${name.replace(/'/g,"\\'")}')">⭐ Add to Bucket List</button>
   `;
   p.style.bottom = "0";
 }
 
-function closeP(){
-  document.getElementById("panel").style.bottom = "-100%";
-}
-
-function openMap(q){
-  open("https://www.google.com/maps/search/?api=1&query=" + q);
-}
+function closeP(){ document.getElementById("panel").style.bottom="-100%"; }
+function openMap(q){ open("https://www.google.com/maps/search/?api=1&query="+q); }
 
 function addBucket(n){
-  let b = JSON.parse(localStorage.getItem("bucketList") || "[]");
-  b.push({ text: "🌍 " + n, checked: false });
-  localStorage.setItem("bucketList", JSON.stringify(b));
-  alert(n + " added!");
+  let b = JSON.parse(localStorage.getItem("bucketList")||"[]");
+  b.push({text:"🌍 "+n,checked:false});
+  localStorage.setItem("bucketList",JSON.stringify(b));
+  alert(n+" added!");
 }
- </script>
+</script>
+
 </body>
 </html>
-
+    
