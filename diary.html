@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sky Atlas — Travel Diary</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BACKGROUND */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(#cfc7ff, #e8e3ff); /* bluish lavender purple */
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* HOME ICON */
+.home-icon {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #e3c9ff;
+    color: #4a3b6b;
+    padding: 12px 14px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: 0.2s ease;
+    z-index: 999;
+}
+.home-icon:hover {
+    transform: scale(1.1);
+}
+
+/* HEADER */
+h1 {
+    text-align: center;
+    margin-top: 60px;
+    font-size: 48px;
+    color: #3b2f63;
+    font-family: 'Great Vibes', cursive;
+}
+
+/* ENTRY FORM */
+.entry-box {
+    background: #ffffffcc;
+    padding: 20px;
+    border-radius: 18px;
+    max-width: 600px;
+    margin: 25px auto;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.entry-box input,
+.entry-box textarea {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.entry-box textarea {
+    height: 120px;
+    resize: none;
+}
+
+.entry-box button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: #bca7ff;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.entry-box button:hover {
+    background: #a894ff;
+}
+
+/* DIARY ENTRIES */
+#entries {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.entry {
+    background: #ffffffdd;
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.entry h3 {
+    margin-bottom: 8px;
+    color: #4a3b6b;
+}
+
+.entry p {
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.entry img {
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 10px;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+    background: none;
+    border: none;
+    color: #ff5c8a;
+    font-size: 20px;
+    cursor: pointer;
+    float: right;
+}
+.delete-btn:hover {
+    transform: scale(1.2);
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME BUTTON -->
+<div class="home-icon" onclick="window.location.href='index.html'">🏠</div>
+
+<h1>My Travel Diary</h1>
+
+<!-- ENTRY FORM -->
+<div class="entry-box">
+    <input id="titleInput" type="text" placeholder="Trip title…">
+    <textarea id="textInput" placeholder="Write about your experience…"></textarea>
+    <input id="photoInput" type="file" accept="image/*">
+    <button onclick="addEntry()">Add Entry</button>
+</div>
+
+<!-- ENTRIES -->
+<div id="entries"></div>
+
+<script>
+/* LOAD SAVED ENTRIES */
+let diary = JSON.parse(localStorage.getItem("diaryEntries") || "[]");
+renderEntries();
+
+/* ADD ENTRY */
+function addEntry() {
+    const title = document.getElementById("titleInput").value.trim();
+    const text = document.getElementById("textInput").value.trim();
+    const photoFile = document.getElementById("photoInput").files[0];
+
+    if (!title && !text && !photoFile) return;
+
+    if (photoFile) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            saveEntry(title, text, e.target.result);
+        };
+        reader.readAsDataURL(photoFile);
+    } else {
+        saveEntry(title, text, null);
+    }
+
+    document.getElementById("titleInput").value = "";
+    document.getElementById("textInput").value = "";
+    document.getElementById("photoInput").value = "";
+}
+
+/* SAVE ENTRY */
+function saveEntry(title, text, photo) {
+    diary.push({ title, text, photo });
+    localStorage.setItem("diaryEntries", JSON.stringify(diary));
+    renderEntries();
+}
+
+/* DELETE ENTRY */
+function deleteEntry(index) {
+    diary.splice(index, 1);
+    localStorage.setItem("diaryEntries", JSON.stringify(diary));
+    renderEntries();
+}
+
+/* RENDER ENTRIES */
+function renderEntries() {
+    const container = document.getElementById("entries");
+    container.innerHTML = "";
+
+    diary.forEach((entry, index) => {
+        container.innerHTML += `
+            <div class="entry">
+                <button class="delete-btn" onclick="deleteEntry(${index})">✖</button>
+                <h3>${entry.title || "Untitled Trip"}</h3>
+                <p>${entry.text || ""}</p>
+                ${entry.photo ? `<img src="${entry.photo}">` : ""}
+            </div>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
