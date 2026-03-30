@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <title>Sky Atlas — Bucket List</title>
 
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 /* RESET */
 * {
@@ -12,11 +15,11 @@
     box-sizing: border-box;
 }
 
-/* PAGE BACKGROUND */
+/* BACKGROUND */
 body {
     font-family: 'Poppins', sans-serif;
-    background: #ffd9e8; /* baby pink */
-    height: 100vh;
+    background: linear-gradient(#ffd9e8, #ffeaf3);
+    min-height: 100vh;
     padding: 20px;
     overflow-x: hidden;
 }
@@ -28,9 +31,9 @@ body {
     left: 15px;
     background: #e3c9ff;
     color: #4a3b6b;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border-radius: 50%;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     transition: 0.2s ease;
@@ -40,70 +43,142 @@ body {
     transform: scale(1.1);
 }
 
+/* HEADER ILLUSTRATION */
+.header-illustration {
+    width: 100%;
+    text-align: center;
+    margin-top: 60px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.cloud {
+    position: absolute;
+    width: 90px;
+    height: 45px;
+    background: #ffffff;
+    border-radius: 50px;
+    box-shadow: 20px 10px 0 #ffffff, 40px 5px 0 #ffffff;
+    opacity: 0.9;
+}
+
+.cloud-1 { top: -20px; left: 10%; }
+.cloud-2 { top: -10px; right: 10%; }
+
+.airplane {
+    font-size: 32px;
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-10deg);
+}
+
+.travel-path {
+    width: 180px;
+    height: 40px;
+    border-bottom: 2px dashed #ff9ac2;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+.globe {
+    font-size: 40px;
+    margin-top: 10px;
+}
+
 /* TITLE */
 h1 {
     text-align: center;
-    margin-top: 60px;
-    font-size: 40px;
+    font-size: 48px;
     color: #4a3b6b;
     font-family: 'Great Vibes', cursive;
+    margin-bottom: 5px;
+}
+
+/* PROGRESS */
+#progress {
+    text-align: center;
+    font-size: 16px;
+    color: #6b4a5f;
+    margin-bottom: 25px;
 }
 
 /* INPUT AREA */
 .input-box {
     display: flex;
     gap: 10px;
-    margin: 25px auto;
-    max-width: 500px;
+    margin: 0 auto 20px auto;
+    max-width: 550px;
 }
 
 .input-box input {
     flex: 1;
-    padding: 12px 15px;
-    border-radius: 12px;
+    padding: 15px 18px;
+    border-radius: 14px;
     border: none;
-    font-size: 16px;
+    font-size: 18px;
     background: #fff;
 }
 
 .input-box button {
-    padding: 12px 20px;
+    padding: 15px 20px;
     border: none;
     background: #e3c9ff;
     color: #4a3b6b;
-    border-radius: 12px;
+    border-radius: 14px;
     font-weight: 600;
     cursor: pointer;
+    font-size: 16px;
     transition: 0.2s;
 }
 .input-box button:hover {
     background: #d8baff;
 }
 
+/* INSPIRE BUTTON */
+.inspire-btn {
+    display: block;
+    margin: 0 auto 25px auto;
+    padding: 12px 20px;
+    background: #ffb3c6;
+    color: #4a3b6b;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: 0.2s;
+}
+.inspire-btn:hover {
+    background: #ffa3b8;
+}
+
 /* LIST */
 ul {
     list-style: none;
-    max-width: 500px;
+    max-width: 550px;
     margin: 0 auto;
     padding: 0;
 }
 
 li {
     background: #ffe6f2;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    border-radius: 12px;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 16px;
+    font-size: 18px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 /* CHECKBOX */
 li input[type="checkbox"] {
-    transform: scale(1.3);
-    margin-right: 10px;
+    transform: scale(1.4);
+    margin-right: 12px;
 }
 
 /* TEXT */
@@ -115,9 +190,9 @@ li input[type="checkbox"] {
 .delete-btn {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
-    margin-left: 10px;
+    margin-left: 12px;
     color: #ff5c8a;
 }
 .delete-btn:hover {
@@ -131,7 +206,17 @@ li input[type="checkbox"] {
 <!-- HOME BUTTON -->
 <div class="home-icon" onclick="window.location.href='index.html'">🏠</div>
 
+<!-- HEADER ILLUSTRATION -->
+<div class="header-illustration">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="airplane">✈️</div>
+    <div class="travel-path"></div>
+    <div class="globe">🌍</div>
+</div>
+
 <h1>My Bucket List</h1>
+<div id="progress">✨ 0 completed out of 0</div>
 
 <!-- INPUT -->
 <div class="input-box">
@@ -139,24 +224,45 @@ li input[type="checkbox"] {
     <button onclick="addItem()">Add</button>
 </div>
 
+<!-- INSPIRE BUTTON -->
+<button class="inspire-btn" onclick="inspireMe()">✨ Inspire Me</button>
+
 <!-- LIST -->
 <ul id="bucketList"></ul>
 
 <script>
+/* CITY INSPIRATION LIST */
+const inspirationCities = [
+    "Paris", "Tokyo", "Seoul", "New York", "London",
+    "Dubai", "Rome", "Barcelona", "Sydney", "Cape Town",
+    "Amsterdam", "Singapore", "Los Angeles", "Berlin", "Toronto"
+];
+
+/* EMOJIS */
+const travelEmojis = ["✈️", "🌍", "🏙️", "🏖️", "🗺️", "🧳", "🌄", "🏞️"];
+
 /* LOAD SAVED LIST */
 let items = JSON.parse(localStorage.getItem("bucketList") || "[]");
 renderList();
 
 /* ADD ITEM */
-function addItem() {
+function addItem(text = null) {
     const input = document.getElementById("bucketInput");
-    const text = input.value.trim();
-    if (text === "") return;
+    const place = text || input.value.trim();
+    if (place === "") return;
 
-    items.push({ text, checked: false });
+    const emoji = travelEmojis[Math.floor(Math.random() * travelEmojis.length)];
+
+    items.push({ text: emoji + " " + place, checked: false });
     input.value = "";
     saveList();
     renderList();
+}
+
+/* INSPIRE ME */
+function inspireMe() {
+    const randomCity = inspirationCities[Math.floor(Math.random() * inspirationCities.length)];
+    addItem(randomCity);
 }
 
 /* TOGGLE CHECK */
@@ -178,6 +284,14 @@ function saveList() {
     localStorage.setItem("bucketList", JSON.stringify(items));
 }
 
+/* UPDATE PROGRESS */
+function updateProgress() {
+    const total = items.length;
+    const done = items.filter(i => i.checked).length;
+    document.getElementById("progress").textContent =
+        `✨ ${done} completed out of ${total}`;
+}
+
 /* RENDER LIST */
 function renderList() {
     const list = document.getElementById("bucketList");
@@ -194,8 +308,11 @@ function renderList() {
             </li>
         `;
     });
+
+    updateProgress();
 }
 </script>
 
 </body>
 </html>
+    
