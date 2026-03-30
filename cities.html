@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sky Atlas — City Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Poppins;background:linear-gradient(#c7c4ff,#e6e4ff);padding:20px;min-height:100vh}
+.home{position:fixed;top:15px;left:15px;background:#e3c9ff;padding:12px;border-radius:50%;font-size:22px;cursor:pointer;z-index:99}
+h1{text-align:center;margin-top:60px;font-size:46px;font-family:'Great Vibes';color:#3b2f63}
+input{width:100%;padding:14px;border:none;border-radius:14px;font-size:17px;box-shadow:0 4px 12px #0002;margin:20px auto;max-width:600px;display:block}
+#list{max-width:600px;margin:0 auto}
+.city{width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:14px;background:#dcd7ff;font-size:17px;display:flex;justify-content:space-between;cursor:pointer}
+#panel{position:fixed;bottom:-100%;left:0;width:100%;height:85vh;background:#fffefeee;border-radius:25px 25px 0 0;box-shadow:0 -6px 20px #0003;padding:20px;overflow-y:auto;transition:.4s;z-index:999}
+.flag{font-size:30px;margin-right:8px}
+.title{font-size:26px;font-weight:600;color:#3b2f63}
+.country{font-size:14px;color:#7a6a9a}
+img{width:100%;border-radius:16px;margin:15px 0}
+.tag{background:#f4f1ff;padding:4px 10px;border-radius:999px;font-size:12px;margin:3px;display:inline-block}
+.sec{font-weight:600;margin-top:12px;color:#4a3b6b}
+.box{background:#f4f1ff;padding:10px;border-radius:12px;font-size:14px;margin-bottom:8px}
+.btn{width:100%;padding:12px;border:none;border-radius:14px;font-size:16px;font-weight:600;margin-top:10px;cursor:pointer}
+.map{background:#bcd6ff;color:#23406b}
+.bucket{background:#e3c9ff;color:#4a3b6b}
+.close{float:right;font-size:26px;color:#ff5c8a;background:none;border:none;cursor:pointer}
+</style>
+</head>
+
+<body>
+
+<div class="home" onclick="location.href='index.html'">🏠</div>
+<h1>City Explorer</h1>
+<input id="search" placeholder="Search for a city…">
+<div id="list"></div>
+<div id="panel"></div>
+
+<script>
+/* COMPRESSED CITY DATABASE — 30 cities */
+const C={
+"Paris":{f:"🇫🇷",c:"France",cat:["Romantic","Aesthetic"],i:"https://upload.wikimedia.org/wikipedia/commons/e/e6/Paris_Night.jpg",s:["Eiffel Tower","Louvre","Montmartre"],e:["Croissants","Macarons"],fun:["River cruise","Vintage shops"],p:["Trocadéro","Pont Alexandre III"],r:["Luxembourg Gardens"],cu:"Romance, art, cafés.",o:"Trench coat + boots",h:"Loose waves",w:"Mild, layered outfits",m:"Paris"},
+"Tokyo":{f:"🇯🇵",c:"Japan",cat:["Futuristic","Foodie"],i:"https://upload.wikimedia.org/wikipedia/commons/1/12/Tokyo_Tower_and_around_Skyscrapers.jpg",s:["Shibuya","Senso-ji"],e:["Sushi","Ramen"],fun:["Arcades","Karaoke"],p:["Shinjuku skyline"],r:["Shinjuku Gyoen"],cu:"Tradition + neon future.",o:"Oversized sweater",h:"Straight glossy hair",w:"4 seasons",m:"Tokyo"},
+"Seoul":{f:"🇰🇷",c:"South Korea",cat:["Trendy","Nightlife"],i:"https://upload.wikimedia.org/wikipedia/commons/6/6e/Seoul_skyline.jpg",s:["Gyeongbokgung","N Seoul Tower"],e:["BBQ","Tteokbokki"],fun:["Hongdae","K-pop shops"],p:["Bukchon"],r:["Hangang"],cu:"Trendy, stylish, youthful.",o:"Pastels + skirts",h:"Korean waves",w:"Cold winters",m:"Seoul"},
+"London":{f:"🇬🇧",c:"UK",cat:["Historic","Cozy"],i:"https://upload.wikimedia.org/wikipedia/commons/c/cd/London_Montage_L.jpg",s:["Big Ben","Tower Bridge"],e:["Fish & chips"],fun:["West End"],p:["Notting Hill"],r:["Hyde Park"],cu:"Royal, rainy, diverse.",o:"Coat + scarf",h:"Messy bun",w:"Rainy",m:"London"},
+"NYC":{f:"🇺🇸",c:"USA",cat:["Urban","Nightlife"],i:"https://upload.wikimedia.org/wikipedia/commons/4/4d/Manhattan_skyline.jpg",s:["Times Square","Central Park"],e:["Bagels","Pizza"],fun:["Broadway"],p:["Brooklyn Bridge"],r:["Bryant Park"],cu:"Fast, iconic, bold.",o:"Black jeans + leather jacket",h:"High pony",w:"Extreme seasons",m:"New York"},
+"Barcelona":{f:"🇪🇸",c:"Spain",cat:["Beachy","Artistic"],i:"https://upload.wikimedia.org/wikipedia/commons/7/79/Barcelona_collage.JPG",s:["Sagrada Família"],e:["Tapas"],fun:["Beach bars"],p:["Park Güell"],r:["Ciutadella"],cu:"Sunny + artistic.",o:"Flowy dress",h:"Beach waves",w:"Warm",m:"Barcelona"},
+"Rome":{f:"🇮🇹",c:"Italy",cat:["Historic","Romantic"],i:"https://upload.wikimedia.org/wikipedia/commons/7/7e/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg",s:["Colosseum"],e:["Pasta","Gelato"],fun:["Trastevere"],p:["Trevi"],r:["Villa Borghese"],cu:"Ancient + charming.",o:"Midi skirts",h:"Soft curls",w:"Warm",m:"Rome"},
+"Dubai":{f:"🇦🇪",c:"UAE",cat:["Luxury","Desert"],i:"https://upload.wikimedia.org/wikipedia/commons/9/9f/Dubai_skyline_2015.jpg",s:["Burj Khalifa"],e:["Shawarma"],fun:["Desert safari"],p:["Marina"],r:["Jumeirah"],cu:"Modern + glam.",o:"Light fabrics",h:"Sleek pony",w:"Hot",m:"Dubai"},
+"Amsterdam":{f:"🇳🇱",c:"Netherlands",cat:["Cozy","Canals"],i:"https://upload.wikimedia.org/wikipedia/commons/6/6c/Amsterdam_Canals.jpg",s:["Canals"],e:["Stroopwafels"],fun:["Bike rides"],p:["Bridges"],r:["Vondelpark"],cu:"Chill + artsy.",o:"Sweater + jeans",h:"Low bun",w:"Cool",m:"Amsterdam"},
+"Kyoto":{f:"🇯🇵",c:"Japan",cat:["Traditional","Calm"],i:"https://upload.wikimedia.org/wikipedia/commons/6/6e/Kiyomizu-dera_in_Kyoto.jpg",s:["Fushimi Inari"],e:["Matcha"],fun:["Tea houses"],p:["Bamboo forest"],r:["Temple gardens"],cu:"Quiet + spiritual.",o:"Earth tones",h:"Braids",w:"Seasonal",m:"Kyoto"},
+"Lisbon":{f:"🇵🇹",c:"Portugal",cat:["Sunny","Coastal"],i:"https://upload.wikimedia.org/wikipedia/commons/c/c6/Lisbon_Montage_2016.png",s:["Belém Tower"],e:["Seafood"],fun:["Tram rides"],p:["Tile streets"],r:["Cascais"],cu:"Warm + musical.",o:"Linen outfits",h:"Windproof pony",w:"Mild",m:"Lisbon"},
+"Bali":{f:"🇮🇩",c:"Indonesia",cat:["Beach","Tropical"],i:"https://upload.wikimedia.org/wikipedia/commons/9/9e/Pura_Ulun_Danu_Bratan%2C_2022.jpg",s:["Rice terraces"],e:["Fruit bowls"],fun:["Surfing"],p:["Waterfalls"],r:["Spas"],cu:"Relaxed + spiritual.",o:"Flowy fits",h:"Braids",w:"Humid",m:"Bali"},
+"Santorini":{f:"🇬🇷",c:"Greece",cat:["Romantic","Aesthetic"],i:"https://upload.wikimedia.org/wikipedia/commons/5/5f/Santorini_Thira.jpg",s:["Oia"],e:["Seafood"],fun:["Boat tours"],p:["Blue domes"],r:["Terraces"],cu:"Dreamy island.",o:"White dresses",h:"Loose curls",w:"Hot",m:"Santorini"},
+"Sydney":{f:"🇦🇺",c:"Australia",cat:["Beach","Urban"],i:"https://upload.wikimedia.org/wikipedia/commons/b/b0/Sydney_Opera_House_Sails.jpg",s:["Opera House"],e:["Brunch"],fun:["Surfing"],p:["Bondi"],r:["Harbour parks"],cu:"Sunny + outdoorsy.",o:"Shorts + tees",h:"Beach waves",w:"Warm",m:"Sydney"},
+"Cape Town":{f:"🇿🇦",c:"South Africa",cat:["Scenic","Adventure"],i:"https://upload.wikimedia.org/wikipedia/commons/a/af/Table_Mountain_from_Bloubergstrand.jpg",s:["Table Mountain"],e:["Seafood"],fun:["Hiking"],p:["Bo-Kaap"],r:["Camps Bay"],cu:"Nature + culture.",o:"Activewear",h:"Protective styles",w:"Windy",m:"Cape Town"},
+"Prague":{f:"🇨🇿",c:"Czechia",cat:["Fairytale","Cozy"],i:"https://upload.wikimedia.org/wikipedia/commons/a/a6/Prague_Panorama.jpg",s:["Charles Bridge"],e:["Goulash"],fun:["River walks"],p:["Old Town"],r:["Parks"],cu:"Storybook vibes.",o:"Coats + boots",h:"Beanie hair",w:"Cold",m:"Prague"},
+"Vienna":{f:"🇦🇹",c:"Austria",cat:["Elegant","Classical"],i:"https://upload.wikimedia.org/wikipedia/commons/5/5e/Vienna_Collage_2014.png",s:["Schönbrunn"],e:["Schnitzel"],fun:["Opera"],p:["Palaces"],r:["Gardens"],cu:"Royal + musical.",o:"Chic neutrals",h:"Low bun",w:"Cold",m:"Vienna"},
+"Seville":{f:"🇪🇸",c:"Spain",cat:["Sunny","Romantic"],i:"https://upload.wikimedia.org/wikipedia/commons/9/9b/Plaza_de_Espa%C3%B1a_%28Seville%29_02.jpg",s:["Plaza de España"],e:["Tapas"],fun:["Flamenco"],p:["Tile plazas"],r:["Parks"],cu:"Warm + lively.",o:"Light dresses",h:"Waves",w:"Hot",m:"Seville"},
+"Berlin":{f:"🇩🇪",c:"Germany",cat:["Nightlife","Urban"],i:"https://upload.wikimedia.org/wikipedia/commons/a/a6/Berlin_Skyline_Fernsehturm_02.jpg",s:["Brandenburg Gate"],e:["Street food"],fun:["Techno clubs"],p:["East Side Gallery"],r:["Tiergarten"],cu:"Edgy + creative.",o:"Black fits",h:"Sleek hair",w:"Cold",m:"Berlin"},
+"Toronto":{f:"🇨🇦",c:"Canada",cat:["Urban","Multicultural"],i:"https://upload.wikimedia.org/wikipedia/commons/c/c0/Toronto_skyline_2020.jpg",s:["CN Tower"],e:["Poutine"],fun:["Harbourfront"],p:["Graffiti Alley"],r:["Islands"],cu:"Friendly + diverse.",o:"Cozy layers",h:"Beanie",w:"Cold",m:"Toronto"}
+};
+
+/* RENDER LIST */
+function R(f=""){let L=document.getElementById("list");L.innerHTML="";f=f.toLowerCase();
+Object.keys(C).sort().filter(x=>x.toLowerCase().includes(f)||C[x].c.toLowerCase().includes(f))
+.forEach(x=>L.innerHTML+=`<div class='city' onclick="openCity('${x}')"><span>${C[x].f} ${x}</span><small>${C[x].c}</small></div>`);}
+R();
+
+/* SEARCH */
+document.getElementById("search").oninput=e=>R(e.target.value);
+
+/* OPEN PANEL */
+function openCity(n){
+let c=C[n],p=document.getElementById("panel");
+p.innerHTML=`
+<button class='close' onclick='closeP()'>✖</button>
+<div class='title'>${c.f} ${n}</div>
+<div class='country'>${c.c}</div>
+<img src='${c.i}'>
+${c.cat.map(t=>`<span class='tag'>${t}</span>`).join("")}
+<div class='sec'>Weather vibe</div><div class='box'>${c.w}</div>
+<div class='sec'>Best sights</div><div class='box'>${c.s.join(", ")}</div>
+<div class='sec'>Best food</div><div class='box'>${c.e.join(", ")}</div>
+<div class='sec'>Fun things</div><div class='box'>${c.fun.join(", ")}</div>
+<div class='sec'>Photo spots</div><div class='box'>${c.p.join(", ")}</div>
+<div class='sec'>Relax spots</div><div class='box'>${c.r.join(", ")}</div>
+<div class='sec'>Culture</div><div class='box'>${c.cu}</div>
+<div class='sec'>Outfit ideas</div><div class='box'>${c.o}</div>
+<div class='sec'>Hairstyle ideas</div><div class='box'>${c.h}</div>
+<button class='btn map' onclick="openMap('${encodeURIComponent(c.m)}')">🗺 Open in Maps</button>
+<button class='btn bucket' onclick="addBucket('${n}')">⭐ Add to Bucket List</button>`;
+p.style.bottom="0";
+}
+
+/* CLOSE */
+function closeP(){document.getElementById("panel").style.bottom="-100%"}
+
+/* MAP */
+function openMap(q){open("https://www.google.com/maps/search/?api=1&query="+q)}
+
+/* BUCKET */
+function addBucket(n){
+let b=JSON.parse(localStorage.getItem("bucketList")||"[]");
+b.push({text:"🌍 "+n,checked:false});
+localStorage.setItem("bucketList",JSON.stringify(b));
+alert(n+" added!");
+}
+</script>
+
+</body>
+</html>
