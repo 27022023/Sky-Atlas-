@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="icon_1772044007674.png?v=1" type="image/png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Translator + Notebook</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #cfe9ff;
+}
+
+#app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.translator {
+  background: #ffd6e8;
+  border: 2px solid #f9a8d4;
+  padding: 25px;
+  margin: 20px 0;
+  border-radius: 20px;
+}
+
+.translator-inner {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid #f3b4d2;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+input, select, button, textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+button {
+  background: #f472b6;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#output {
+  min-height: 80px;
+  background: #ffe9f5;
+}
+
+.notebook {
+  background: #fff7c2;
+  border: 2px solid #fce588;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 15px;
+}
+
+#notes {
+  min-height: 150px;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.clear-btn {
+  background: #e8d4ff;
+  border: 1px solid #c7a8ff;
+  color: #4a2a7a;
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-top: 12px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <div class="translator">
+    <h2>Translator</h2>
+
+    <div class="translator-inner">
+
+      <div class="row">
+        <label>Text to translate:</label>
+        <textarea id="inputText" rows="3" placeholder="Type here..."></textarea>
+      </div>
+
+      <div class="row">
+        <label>From language:</label>
+        <select id="fromLang"></select>
+      </div>
+
+      <div class="row">
+        <label>To language:</label>
+        <select id="toLang"></select>
+      </div>
+
+      <div class="row">
+        <button id="translateBtn">Translate</button>
+      </div>
+
+      <div class="row">
+        <label>Result:</label>
+        <textarea id="output" readonly></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="notebook">
+    <h2>Notebook</h2>
+    <div id="notes"></div>
+    <button id="clearNotesBtn" class="clear-btn">Clear All</button>
+  </div>
+
+</div>
+
+<script>
+// ALL LANGUAGES YOU REQUESTED — WITH CORRECT ISO CODES
+const languages = [
+  { code: "el", name: "Greek", flag: "🇬🇷" },
+  { code: "de", name: "German", flag: "🇩🇪" },
+  { code: "fr", name: "French", flag: "🇫🇷" },
+  { code: "en", name: "English", flag: "🇬🇧/🇺🇸" },
+  { code: "es", name: "Spanish", flag: "🇪🇸" },
+  { code: "zh", name: "Chinese", flag: "🇨🇳" },
+  { code: "ko", name: "Korean", flag: "🇰🇷" },
+  { code: "ja", name: "Japanese", flag: "🇯🇵" },
+  { code: "fi", name: "Finnish", flag: "🇫🇮" },
+  { code: "no", name: "Norwegian", flag: "🇳🇴" },
+  { code: "sv", name: "Swedish", flag: "🇸🇪" },
+  { code: "et", name: "Estonian", flag: "🇪🇪" },
+  { code: "ar", name: "Arabic", flag: "🇸🇦" }, // Egyptian Arabic uses same code
+  { code: "ru", name: "Russian", flag: "🇷🇺" },
+  { code: "uk", name: "Ukrainian", flag: "🇺🇦" },
+  { code: "sr", name: "Serbian", flag: "🇷🇸" },
+  { code: "hr", name: "Croatian", flag: "🇭🇷" },
+  { code: "sl", name: "Slovenian", flag: "🇸🇮" },
+  { code: "sk", name: "Slovak", flag: "🇸🇰" },
+  { code: "pl", name: "Polish", flag: "🇵🇱" },
+  { code: "it", name: "Italian", flag: "🇮🇹" },
+  { code: "nl", name: "Dutch", flag: "🇳🇱" },
+  { code: "hi", name: "Hindi", flag: "🇮🇳" },
+  { code: "pt", name: "Portuguese", flag: "🇵🇹" },
+  { code: "af", name: "Afrikaans", flag: "🇿🇦" },
+  { code: "cs", name: "Czech", flag: "🇨🇿" }
+];
+
+const fromSel = document.getElementById("fromLang");
+const toSel = document.getElementById("toLang");
+
+// Fill dropdowns with flags
+languages.forEach(lang => {
+  const opt1 = document.createElement("option");
+  opt1.value = lang.code;
+  opt1.textContent = `${lang.flag} ${lang.name}`;
+  fromSel.appendChild(opt1);
+
+  const opt2 = document.createElement("option");
+  opt2.value = lang.code;
+  opt2.textContent = `${lang.flag} ${lang.name}`;
+  toSel.appendChild(opt2);
+});
+
+// Default languages
+fromSel.value = "en";
+toSel.value = "es";
+
+// Translation function
+async function translate(text, from, to) {
+  const url =
+    "https://api.mymemory.translated.net/get?q=" +
+    encodeURIComponent(text) +
+    "&langpair=" +
+    from +
+    "|" +
+    to;
+
+  const res = await fetch(url);
+  const data = await res.json();
+  return data.responseData.translatedText || "";
+}
+
+// Load notebook
+window.onload = () => {
+  const saved = localStorage.getItem("notes");
+  if (saved) document.getElementById("notes").innerHTML = saved;
+};
+
+document.getElementById("translateBtn").onclick = async () => {
+  const text = document.getElementById("inputText").value.trim();
+  const from = fromSel.value;
+  const to = toSel.value;
+
+  if (!text) return;
+
+  document.getElementById("output").value = "Translating...";
+
+  try {
+    const result = await translate(text, from, to);
+    document.getElementById("output").value = result;
+
+    // Save to notebook
+    const notes = document.getElementById("notes");
+    notes.innerHTML += `<div>${text} → ${result}</div>`;
+    localStorage.setItem("notes", notes.innerHTML);
+
+  } catch (e) {
+    document.getElementById("output").value = "Error. Try again.";
+  }
+};
+
+document.getElementById("clearNotesBtn").onclick = () => {
+  document.getElementById("notes").innerHTML = "";
+  localStorage.removeItem("notes");
+};
+</script>
+
+</body>
+</html>
