@@ -33,4 +33,104 @@ img{width:100%;border-radius:16px;margin:15px 0}
 <input id="search" placeholder="Search for a city…">
 <div id="list"></div>
 <div id="panel"></div>
-      
+ <script>
+/*  
+CITY DATA WILL BE INSERTED INSIDE THIS OBJECT  
+*/
+const CITY_DATA = {
+
+    /* <-- paste all your cities here later */
+
+};
+
+/* parse compressed city string */
+function parseCity(str){
+  const [flag,country,cats,sights,food,fun,photos,relax,culture,outfit,hair,weather,maps,transport,durations] = str.split("|");
+  return {
+    flag,
+    country,
+    categories: cats.split(","),
+    sights: sights.split(";"),
+    food: food.split(";"),
+    fun: fun.split(";"),
+    photos: photos.split(";"),
+    relax: relax.split(";"),
+    culture,
+    outfit: outfit.split(";"),
+    hair: hair.split(";"),
+    weather,
+    maps,
+    transport: transport.split(";"),
+    durations: durations.split(";")
+  };
+}
+
+/* expand all cities */
+const C = {};
+Object.keys(CITY_DATA).forEach(n => C[n] = parseCity(CITY_DATA[n]));
+
+/* render list */
+function render(f=""){
+  const L = document.getElementById("list");
+  L.innerHTML = "";
+  f = f.toLowerCase();
+  Object.keys(C)
+    .sort()
+    .filter(n => n.toLowerCase().includes(f) || C[n].country.toLowerCase().includes(f))
+    .forEach(n => {
+      const c = C[n];
+      L.innerHTML += `
+        <div class="city" onclick="openCity('${n.replace(/'/g,"\\'")}')">
+          <span>${c.flag} ${n}</span>
+          <small>${c.country}</small>
+        </div>`;
+    });
+}
+render();
+
+/* search */
+document.getElementById("search").oninput = e => render(e.target.value);
+
+/* open panel */
+function openCity(name){
+  const c = C[name];
+  const p = document.getElementById("panel");
+  const transportRows = c.transport.map((t,i) => `${t}: ${c.durations[i] || ""}`).join(" • ");
+
+  p.innerHTML = `
+    <button class="close" onclick="closeP()">✖</button>
+    <div class="title">${c.flag} ${name}</div>
+    <div class="country">${c.country}</div>
+    <img src="https://source.unsplash.com/800x500/?${encodeURIComponent(name)}">
+    ${c.categories.map(t => `<span class="tag">${t}</span>`).join("")}
+    <div class="sec">Weather vibe</div><div class="box">${c.weather}</div>
+    <div class="sec">Best sights</div><div class="box">${c.sights.join(", ")}</div>
+    <div class="sec">Best food</div><div class="box">${c.food.join(", ")}</div>
+    <div class="sec">Fun things</div><div class="box">${c.fun.join(", ")}</div>
+    <div class="sec">Photo spots</div><div class="box">${c.photos.join(", ")}</div>
+    <div class="sec">Relax spots</div><div class="box">${c.relax.join(", ")}</div>
+    <div class="sec">Culture</div><div class="box">${c.culture}</div>
+    <div class="sec">Outfit ideas</div><div class="box">${c.outfit.join(", ")}</div>
+    <div class="sec">Hairstyle ideas</div><div class="box">${c.hair.join(", ")}</div>
+    <div class="sec">How to get there</div><div class="box">${transportRows}</div>
+    <button class="btn map" onclick="openMap('${encodeURIComponent(c.maps)}')">🗺 Open in Maps</button>
+    <button class="btn bucket" onclick="addBucket('${name.replace(/'/g,"\\'")}')">⭐ Add to Bucket List</button>
+  `;
+  p.style.bottom = "0";
+}
+
+function closeP(){
+  document.getElementById("panel").style.bottom = "-100%";
+}
+
+function openMap(q){
+  open("https://www.google.com/maps/search/?api=1&query=" + q);
+}
+
+function addBucket(n){
+  let b = JSON.parse(localStorage.getItem("bucketList") || "[]");
+  b.push({ text: "🌍 " + n, checked: false });
+  localStorage.setItem("bucketList", JSON.stringify(b));
+  alert(n + " added!");
+}
+       
