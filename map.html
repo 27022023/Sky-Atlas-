@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sky Atlas — Map</title>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+/* RESET */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* FULL SCREEN PAGE */
+body {
+    font-family: 'Poppins', sans-serif;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+/* HOME ICON */
+.home-icon {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #e3c9ff;
+    color: #4a3b6b;
+    padding: 10px 12px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: 0.2s ease;
+}
+.home-icon:hover {
+    transform: scale(1.1);
+    background: #d8baff;
+}
+
+/* SEARCH BAR */
+.search-container {
+    position: absolute;
+    top: 15px;
+    left: 60px;
+    right: 15px;
+    z-index: 9999;
+    display: flex;
+    gap: 10px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: none;
+    background: #fff7e6; /* soft vanilla cream */
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* RADIUS SLIDER */
+.radius-box {
+    position: absolute;
+    top: 70px;
+    left: 15px;
+    right: 15px;
+    z-index: 9999;
+    background: #ffffffdd;
+    padding: 10px 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 14px;
+}
+
+/* CATEGORY BUTTONS */
+.category-buttons {
+    position: absolute;
+    top: 130px;
+    left: 15px;
+    right: 15px;
+    z-index: 9999;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+}
+
+.category-buttons button {
+    flex: none;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+
+/* Pastel category colors */
+.btn-food { background: #ffb3c6; }      /* pink */
+.btn-shop { background: #d8baff; }      /* lavender */
+.btn-cafe { background: #f5e6cc; }      /* beige */
+.btn-quiet { background: #c9f7d4; }     /* mint */
+.btn-fun { background: #fff5a8; }       /* yellow */
+
+.category-buttons button:hover {
+    transform: scale(1.05);
+}
+
+/* MAP */
+#map {
+    position: absolute;
+    top: 190px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 190px);
+    z-index: 1;
+}
+
+/* RESULTS LIST */
+#results {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    max-height: 40vh;
+    overflow-y: auto;
+    background: #ffffffee;
+    padding: 15px;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    font-size: 14px;
+}
+
+.result-item {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.favorite-btn {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 8px;
+    color: gold;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME BUTTON -->
+<div class="home-icon" onclick="window.location.href='index.html'">🏠</div>
+
+<!-- SEARCH BAR -->
+<div class="search-container">
+    <input id="searchInput" class="search-input" type="text" placeholder="Search for cafés, parks, shops…">
+</div>
+
+<!-- RADIUS SLIDER -->
+<div class="radius-box">
+    Search radius: <span id="radiusValue">2000</span> meters
+    <input id="radiusSlider" type="range" min="500" max="5000" value="2000" step="500" style="width:100%;">
+</div>
+
+<!-- CATEGORY BUTTONS -->
+<div class="category-buttons">
+    <button class="btn-food" onclick="findCategory('restaurant')">🍽 Food</button>
+    <button class="btn-shop" onclick="findCategory('clothes')">🛍 Shopping</button>
+    <button class="btn-cafe" onclick="findCategory('cafe')">☕ Hangouts</button>
+    <button class="btn-quiet" onclick="findCategory('park')">🌿 Quiet Spots</button>
+    <button class="btn-fun" onclick="findCategory('fun')">🎡 Fun</button>
+</div>
+
+<!-- MAP -->
+<div id="map"></div>
+
+<!-- RESULTS -->
+<div id="results"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+let map;
+let userLat, userLon;
+let radius = 2000;
+
+/* UPDATE RADIUS */
+document.getElementById("radiusSlider").oninput = function() {
+    radius = this.value;
+    document.getElementById("radiusValue").textContent = radius;
+};
+
+/* INIT MAP */
+navigator.geolocation.getCurrentPosition(pos => {
+    userLat = pos.coords.latitude;
+    userLon = pos.coords.longitude;
+
+    map = L.map('map').setView([userLat, userLon], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    L.marker([userLat, userLon]).addTo(map)
+        .bindPopup("📍 You are here")
+        .openPopup();
+});
+
+/* CATEGORY SEARCH */
+function findCategory(type) {
+    searchPlaces(type);
+}
+
+/* SEARCH BAR */
+document.getElementById("searchInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        searchPlaces(document.getElementById("searchInput").value);
+    }
+});
+
+/* SEARCH FUNCTION */
+function searchPlaces(keyword) {
+    if (!userLat) return;
+
+    const query = `
+        [out:json];
+        (
+            node["amenity"="${keyword}"](around:${radius}, ${userLat}, ${userLon});
+            node["shop"="${keyword}"](around:${radius}, ${userLat}, ${userLon});
+            node["leisure"="${keyword}"](around:${radius}, ${userLat}, ${userLon});
+        );
+        out;
+    `;
+
+    fetch("https://overpass-api.de/api/interpreter", {
+        method: "POST",
+        body: query
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("results").innerHTML = "";
+
+        data.elements.forEach(place => {
+            const lat = place.lat;
+            const lon = place.lon;
+            const name = place.tags.name || "Unnamed place";
+
+            L.marker([lat, lon]).addTo(map).bindPopup(name);
+
+            document.getElementById("results").innerHTML += `
+                <div class="result-item">
+                    <strong>${name}</strong>
+                    <span class="favorite-btn" onclick="saveFavorite('${name}', ${lat}, ${lon})">⭐</span>
+                    <br>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}" target="_blank">
+                        ➜ Get Directions
+                    </a>
+                </div>
+            `;
+        });
+    });
+}
+
+/* SAVE FAVORITES */
+function saveFavorite(name, lat, lon) {
+    let favs = JSON.parse(localStorage.getItem("favorites") || "[]");
+    favs.push({ name, lat, lon });
+    localStorage.setItem("favorites", JSON.stringify(favs));
+    alert("Added to favorites!");
+}
+</script>
+
+</body>
+</html>
