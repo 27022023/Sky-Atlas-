@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sky Atlas</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* Global */
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(#cfe9ff, #f7fbff);
+    color: #333;
+}
+
+/* Top bar */
+.top-bar {
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    background: transparent;
+}
+
+.menu-button {
+    background: #e3c9ff;
+    color: #4a3b6b;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: 0.15s ease;
+}
+.menu-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+/* Slide-down menu */
+.menu-panel {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90%, 600px);
+    background: #f3e7ff;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 15px 25px;
+    z-index: 19;
+
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+.menu-panel.open { max-height: 300px; }
+
+.menu-panel ul { list-style: none; padding: 0; margin: 0; }
+.menu-panel li { margin: 8px 0; }
+.menu-panel a {
+    text-decoration: none;
+    color: #4a3b6b;
+    font-weight: 500;
+}
+
+/* Hero */
+.hero {
+    text-align: center;
+    padding-top: 120px;
+    padding-bottom: 40px;
+}
+
+.logo-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 64px;
+    color: #3b4b73;
+    margin: 0;
+}
+
+.tagline {
+    font-size: 16px;
+    color: #5f6f94;
+    margin-top: 8px;
+    margin-bottom: 30px;
+}
+
+/* Sky + clouds */
+.sky {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    height: 320px;
+}
+
+.cloud {
+    position: absolute;
+    width: 120px;
+    height: 60px;
+    background: #ffffff;
+    border-radius: 50px;
+    box-shadow: 20px 10px 0 #ffffff, 40px 5px 0 #ffffff;
+    opacity: 0.9;
+}
+
+.cloud-1 { top: 30px; left: 10%; animation: float 12s linear infinite; }
+.cloud-2 { top: 60px; right: 5%; animation: float 16s linear infinite; }
+.cloud-3 { top: 140px; left: 60%; animation: float 20s linear infinite; }
+
+@keyframes float {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(20px); }
+    100% { transform: translateX(0); }
+}
+
+/* Globe + airplane */
+.globe-wrapper {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 220px;
+}
+
+.globe {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #9ad0ff, #3b7bd9);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.globe::before,
+.globe::after {
+    content: "";
+    position: absolute;
+    background: rgba(144, 209, 120, 0.9);
+    border-radius: 50px;
+}
+.globe::before { width: 90px; height: 60px; top: 40px; left: 40px; }
+.globe::after { width: 70px; height: 50px; bottom: 50px; right: 30px; }
+
+/* Airplane orbit */
+.plane-orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 260px;
+    height: 260px;
+    margin-top: -130px;
+    margin-left: -130px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255,255,255,0.6);
+    animation: orbit 10s linear infinite;
+}
+
+.plane {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+}
+
+@keyframes orbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Sections */
+.section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffffcc;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.section h2 {
+    margin-top: 0;
+    color: #3b4b73;
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="top-bar">
+    <button id="menu-toggle" class="menu-button">Let’s travel!!</button>
+</header>
+
+<nav id="main-menu" class="menu-panel">
+    <ul>
+        <li><a href="#map-section">Map</a></li>
+        <li><a href="#bucket-section">Bucket List</a></li>
+        <li><a href="#diary-section">Travel Diary</a></li>
+        <li><a href="#cities-section">City Explorer</a></li>
+        <li><a href="#translator-section">Translator</a></li>
+    </ul>
+</nav>
+
+<main class="hero">
+    <h1 class="logo-title">Sky Atlas</h1>
+    <p class="tagline">Discover the world, one city at a time</p>
+
+    <div class="sky">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+
+        <div class="globe-wrapper">
+            <div class="globe"></div>
+            <div class="plane-orbit">
+                <div class="plane">✈</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<section id="map-section" class="section">
+    <h2>Map</h2>
+    <p>Interactive map coming next.</p>
+</section>
+
+<section id="bucket-section" class="section">
+    <h2>Bucket List</h2>
+    <p>We’ll add automatic saving here.</p>
+</section>
+
+<section id="diary-section" class="section">
+    <h2>Travel Diary</h2>
+    <p>Your little book will go here.</p>
+</section>
+
+<section id="cities-section" class="section">
+    <h2>City Explorer</h2>
+    <p>City list + info coming soon.</p>
+</section>
+
+<section id="translator-section" class="section">
+    <h2>Translator</h2>
+    <p>We’ll plug in your translator code here.</p>
+</section>
+
+<script>
+// Toggle menu
+const menuToggle = document.getElementById('menu-toggle');
+const mainMenu = document.getElementById('main-menu');
+
+menuToggle.addEventListener('click', () => {
+    mainMenu.classList.toggle('open');
+});
+
+// Close menu when clicking a link
+mainMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+        mainMenu.classList.remove('open');
+    });
+});
+</script>
+
+</body>
+</html>
