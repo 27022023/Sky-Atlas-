@@ -194,6 +194,15 @@ let map;
 let userLat, userLon;
 let radius = 2000;
 
+/* CATEGORY → REAL OSM TAGS */
+const categoryTags = {
+    restaurant: { key: "amenity", value: "restaurant" },
+    cafe: { key: "amenity", value: "cafe" },
+    clothes: { key: "shop", value: "clothes" },
+    park: { key: "leisure", value: "park" },
+    fun: { key: "leisure", value: "amusement_ride" }
+};
+
 /* UPDATE RADIUS */
 document.getElementById("radiusSlider").oninput = function() {
     radius = this.value;
@@ -218,30 +227,44 @@ navigator.geolocation.getCurrentPosition(pos => {
 
 /* CATEGORY SEARCH */
 function findCategory(type) {
-    searchPlaces(type);
+    const tag = categoryTags[type];
+    if (!tag) return;
+
+    const query = `
+        [out:json];
+        node["${tag.key}"="${tag.value}"](around:${radius}, ${userLat}, ${userLon});
+        out;
+    `;
+
+    runQuery(query);
 }
 
 /* SEARCH BAR */
 document.getElementById("searchInput").addEventListener("keydown", e => {
     if (e.key === "Enter") {
-        searchPlaces(document.getElementById("searchInput").value);
+        const keyword = document.getElementById("searchInput").value.trim();
+        if (keyword.length > 0) searchKeyword(keyword);
     }
 });
 
-/* SEARCH FUNCTION */
-function searchPlaces(keyword) {
-    if (!userLat) return;
-
+/* KEYWORD SEARCH */
+function searchKeyword(keyword) {
     const query = `
         [out:json];
         (
-            node["amenity"="${keyword}"](around:${radius}, ${userLat}, ${userLon});
-            node["shop"="${keyword}"](around:${radius}, ${userLat}, ${userLon});
-            node["leisure"="${keyword}"](around:${radius}, ${userLat}, ${userLon});
+            node["name"~"${keyword}", i](around:${radius}, ${userLat}, ${userLon});
+            node["amenity"~"${keyword}", i](around:${radius}, ${userLat}, ${userLon});
+            node["shop"~"${keyword}", i](around:${radius}, ${userLat}, ${userLon});
+            node["leisure"~"${keyword}", i](around:${radius}, ${userLat}, ${userLon});
         );
         out;
     `;
 
+    runQuery(query);
+}
+
+/* RUN QUERY + DISPLAY RESULTS */
+function runQuery(query) {
     fetch("https://overpass-api.de/api/interpreter", {
         method: "POST",
         body: query
@@ -249,6 +272,12 @@ function searchPlaces(keyword) {
     .then(res => res.json())
     .then(data => {
         document.getElementById("results").innerHTML = "";
+
+        if (!data.elements.length) {
+            document.getElementById("results").innerHTML =
+                "<p>No results found nearby.</p>";
+            return;
+        }
 
         data.elements.forEach(place => {
             const lat = place.lat;
@@ -282,3 +311,5 @@ function saveFavorite(name, lat, lon) {
 
 </body>
 </html>
+
+
