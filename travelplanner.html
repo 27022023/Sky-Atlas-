@@ -1,366 +1,229 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Travel Planner</title><style>
-body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#e9e4ff,#cfe7ff,#ffe6f2);}
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Travel Planner</title>
+<style>
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#e9e4ff,#cfe7ff,#ffe6f2);font-size:5vw;}
 *{box-sizing:border-box;}
-.page{max-width:900px;margin:0 auto;padding:20px 16px 40px 16px;}
-
-/* HOME BUTTON */
-.home-btn{
-  position:fixed;top:15px;left:15px;
-  background:#ffe6f2;
-  border-radius:50%;
-  width:60px;height:60px;
-  display:flex;justify-content:center;align-items:center;
-  font-size:34px;
-  border:3px solid #f3cde5;
-  cursor:pointer;z-index:999;
-  box-shadow:0 4px 8px rgba(0,0,0,.2);
-}
-
-h1{margin-top:90px;font-size:38px;text-align:center;color:#4b3f72;font-weight:bold;}
-.section{background:#ffffffcc;border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 3px 8px rgba(0,0,0,.08);}
-.section-title{font-size:26px;font-weight:bold;margin-bottom:12px;color:#4b3f72;}
-label{display:block;font-size:20px;margin:6px 0 2px 0;color:#4b3f72;}
-input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ccc;font-size:18px;margin-bottom:10px;}
-textarea{min-height:80px;resize:vertical;}
-.info-row{display:flex;gap:12px;flex-wrap:wrap;}
-.info-row>div{flex:1 1 180px;}
-.big-text{font-size:20px;}
-.badge{display:inline-block;background:#e4ddff;color:#4b3f72;padding:8px 14px;border-radius:999px;font-size:18px;margin-top:6px;}
-
-/* Calendar */
-.calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.calendar-header button{
-  background:#d9c8ff;border:none;border-radius:999px;
-  padding:8px 14px;font-size:22px;cursor:pointer;color:#3f326b;
-}
-.calendar-header span{font-size:26px;font-weight:bold;color:#3f326b;}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;font-size:18px;}
-.calendar-day-name{font-weight:bold;text-align:center;color:#4b3f72;font-size:18px;}
-.calendar-cell{
-  background:#f7f4ff;border-radius:14px;height:70px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer;position:relative;
-}
+.page{max-width:900px;margin:0 auto;padding:6vw;}
+.home-btn{position:fixed;top:3vw;left:3vw;background:#ffe6f2;border-radius:50%;width:14vw;height:14vw;display:flex;justify-content:center;align-items:center;font-size:8vw;border:.8vw solid #f3cde5;cursor:pointer;z-index:999;box-shadow:0 4px 8px rgba(0,0,0,.2);}
+h1{margin-top:22vw;font-size:12vw;text-align:center;color:#4b3f72;font-weight:bold;}
+.section{background:#ffffffcc;border-radius:5vw;padding:5vw;margin-top:6vw;box-shadow:0 3px 8px rgba(0,0,0,.08);}
+.section-title{font-size:7vw;font-weight:bold;margin-bottom:4vw;color:#4b3f72;}
+label{display:block;font-size:5vw;margin:3vw 0 1vw;color:#4b3f72;}
+input,select,textarea{width:100%;padding:4vw;border-radius:4vw;border:1px solid #ccc;font-size:5vw;margin-bottom:4vw;}
+textarea{min-height:20vw;}
+.info-row{display:flex;gap:4vw;flex-wrap:wrap;}
+.info-row>div{flex:1 1 40vw;}
+.badge{display:inline-block;background:#e4ddff;color:#4b3f72;padding:3vw 5vw;border-radius:999px;font-size:5vw;margin-top:3vw;}
+.reminder-banner{margin-top:4vw;padding:4vw;border-radius:4vw;background:#ffeaf4;color:#5b2340;font-size:5vw;display:none;}
+.calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4vw;}
+.calendar-header button{background:#d9c8ff;border:none;border-radius:999px;padding:3vw 5vw;font-size:7vw;color:#3f326b;cursor:pointer;}
+.calendar-header span{font-size:7vw;font-weight:bold;color:#3f326b;}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2vw;font-size:5vw;}
+.calendar-day-name{text-align:center;font-weight:bold;color:#4b3f72;}
+.calendar-cell{background:#f7f4ff;border-radius:4vw;height:14vw;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;}
 .calendar-cell.disabled{opacity:.3;cursor:default;}
-.calendar-cell span{font-size:22px;color:#4b3f72;}
-.calendar-dot{
-  width:9px;height:9px;border-radius:50%;
-  background:#ff8fb8;position:absolute;bottom:8px;
-}
-
-/* Bubble popup */
-#dayPopup{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,.45);display:none;
-  justify-content:center;align-items:center;z-index:1000;
-}
-.popup-inner{
-  background:#fdf3ff;border-radius:24px;padding:20px;
-  width:85%;max-width:450px;box-shadow:0 4px 10px rgba(0,0,0,.2);
-}
-.popup-title{font-size:26px;font-weight:bold;margin-bottom:10px;color:#4b3f72;}
-.popup-date{font-size:20px;margin-bottom:12px;color:#6a5a9b;}
-.popup-inner textarea{
-  background:#ffffff;border-radius:14px;border:1px solid #d9c8ff;font-size:18px;
-}
-.popup-buttons{display:flex;justify-content:space-between;margin-top:12px;gap:10px;}
-.popup-buttons button{
-  flex:1;padding:12px;border-radius:999px;border:none;font-size:20px;cursor:pointer;
-}
+.calendar-cell span{font-size:6vw;color:#4b3f72;}
+.calendar-dot{width:2vw;height:2vw;border-radius:50%;background:#ff8fb8;position:absolute;bottom:1.5vw;}
+#dayPopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);display:none;justify-content:center;align-items:center;z-index:1000;}
+.popup-inner{background:#fdf3ff;border-radius:5vw;padding:5vw;width:85%;max-width:450px;box-shadow:0 4px 10px rgba(0,0,0,.2);}
+.popup-title{font-size:7vw;font-weight:bold;color:#4b3f72;margin-bottom:3vw;}
+.popup-date{font-size:5vw;color:#6a5a9b;margin-bottom:4vw;}
+.popup-inner textarea{border-radius:4vw;border:1px solid #d9c8ff;font-size:5vw;padding:4vw;}
+.popup-buttons{display:flex;gap:3vw;margin-top:4vw;}
+.popup-buttons button{flex:1;padding:4vw;border-radius:999px;border:none;font-size:5vw;cursor:pointer;}
 .popup-save{background:#c9e7ff;color:#23405f;}
 .popup-delete{background:#ffd1e3;color:#5b2340;}
 .popup-cancel{background:#e4ddff;color:#3f326b;}
-
-/* Lists */
-.list-input-row{display:flex;gap:10px;margin-top:8px;}
+.list-input-row{display:flex;gap:3vw;margin-top:3vw;}
 .list-input-row input{flex:1;}
-.list-input-row button{
-  padding:12px 16px;border-radius:12px;border:none;
-  background:#c9e7ff;font-size:22px;cursor:pointer;color:#23405f;
-}
-ul{list-style:none;padding-left:0;margin-top:12px;}
-li{
-  display:flex;align-items:center;justify-content:space-between;
-  background:#f7f4ff;border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:20px;
-}
-li span{flex:1;margin-left:10px;}
-li button{
-  border:none;background:#ffd1e3;border-radius:999px;
-  padding:6px 12px;font-size:18px;cursor:pointer;color:#5b2340;
-}
-li input[type="checkbox"]{transform:scale(1.4);}
-.reminder-banner{
-  margin-top:10px;padding:12px;border-radius:14px;
-  background:#ffeaf4;color:#5b2340;font-size:20px;display:none;
-}
-</style></head><body>
+.list-input-row button{padding:3vw 4vw;border-radius:4vw;border:none;background:#c9e7ff;font-size:7vw;color:#23405f;cursor:pointer;}
+ul{list-style:none;margin-top:4vw;padding:0;}
+li{display:flex;align-items:center;justify-content:space-between;background:#f7f4ff;border-radius:4vw;padding:4vw;margin-bottom:3vw;font-size:5vw;}
+li span{flex:1;margin-right:4vw;}
+li input[type=checkbox]{transform:scale(2);margin-left:4vw;}
+li button{border:none;background:#ffd1e3;border-radius:999px;padding:2vw 3vw;font-size:5vw;color:#5b2340;margin-left:3vw;cursor:pointer;}
+</style></head>
 
-<!-- HOME BUTTON -->
+<body>
 <div class="home-btn" onclick="location.href='index.html'">🏠</div>
 
 <div class="page">
-  <h1>Travel Planner</h1>
+<h1>Travel Planner</h1>
 
-  <!-- TRIP DETAILS -->
-  <div class="section">
-    <div class="section-title">Trip Details</div>
-    <div class="info-row big-text">
-      <div><label>Trip name</label><input id="tripName" placeholder="Summer in Europe"></div>
-      <div><label>Destination</label><input id="tripDestination" placeholder="Paris, Tokyo, etc."></div>
-    </div>
-    <div class="info-row big-text">
-      <div><label>Start date</label><input id="tripStart" type="date"></div>
-      <div><label>End date</label><input id="tripEnd" type="date"></div>
-    </div>
-    <div class="info-row big-text">
-      <div>
-        <label>Transport</label>
-        <select id="tripTransport">
-          <option value="">Choose...</option>
-          <option>Plane ✈️</option>
-          <option>Train 🚆</option>
-          <option>Car 🚗</option>
-          <option>Bus 🚌</option>
-          <option>Boat ⛴️</option>
-        </select>
-      </div>
-      <div><label>Stay length</label><input id="tripLength" placeholder="e.g. 7 nights"></div>
-    </div>
-    <div class="big-text"><span class="badge" id="tripDurationBadge">Duration: –</span></div>
-    <div class="reminder-banner" id="reminderBanner">🌸 ✈️ Your trip starts tomorrow! Don’t forget your essentials 💕</div>
-  </div>
-
-  <!-- CALENDAR -->
-  <div class="section">
-    <div class="section-title">Calendar</div>
-    <div class="calendar-header">
-      <button onclick="changeMonth(-1)">◀</button>
-      <span id="calMonthLabel">Month YYYY</span>
-      <button onclick="changeMonth(1)">▶</button>
-    </div>
-    <div class="calendar-grid big-text" id="calendarGrid"></div>
-  </div>
-
-  <!-- PACKING -->
-  <div class="section">
-    <div class="section-title">Packing Checklist</div>
-    <div class="list-input-row">
-      <input id="packInput" placeholder="Add item to pack">
-      <button onclick="addPackItem()">＋</button>
-    </div>
-    <ul id="packList"></ul>
-  </div>
-
-  <!-- TODO -->
-  <div class="section">
-    <div class="section-title">Things To Do</div>
-    <div class="list-input-row">
-      <input id="todoInput" placeholder="Add activity or place">
-      <button onclick="addTodoItem()">＋</button>
-    </div>
-    <ul id="todoList"></ul>
-  </div>
+<div class="section">
+<div class="section-title">Trip Details</div>
+<div class="info-row">
+<div><label>Trip name</label><input id="tripName"></div>
+<div><label>Destination</label><input id="tripDestination"></div>
+</div>
+<div class="info-row">
+<div><label>Start date</label><input id="tripStart" type="date"></div>
+<div><label>End date</label><input id="tripEnd" type="date"></div>
+</div>
+<div class="info-row">
+<div><label>Transport</label>
+<select id="tripTransport"><option value="">Choose...</option><option>Plane ✈️</option><option>Train 🚆</option><option>Car 🚗</option><option>Bus 🚌</option><option>Boat ⛴️</option></select></div>
+<div><label>Stay length</label><input id="tripLength"></div>
+</div>
+<span class="badge" id="tripDurationBadge">Duration: –</span>
+<div class="reminder-banner" id="reminderBanner">🌸 ✈️ Your trip starts tomorrow!</div>
 </div>
 
-<!-- DAY POPUP -->
+<div class="section">
+<div class="section-title">Calendar</div>
+<div class="calendar-header">
+<button onclick="changeMonth(-1)">◀</button>
+<span id="calMonthLabel"></span>
+<button onclick="changeMonth(1)">▶</button>
+</div>
+<div class="calendar-grid" id="calendarGrid"></div>
+</div>
+
+<div class="section">
+<div class="section-title">Packing Checklist</div>
+<div class="list-input-row"><input id="packInput"><button onclick="addPackItem()">＋</button></div>
+<ul id="packList"></ul>
+</div>
+
+<div class="section">
+<div class="section-title">Things To Do</div>
+<div class="list-input-row"><input id="todoInput"><button onclick="addTodoItem()">＋</button></div>
+<ul id="todoList"></ul>
+</div>
+</div>
+
 <div id="dayPopup">
-  <div class="popup-inner">
-    <div class="popup-title">Day Notes</div>
-    <div class="popup-date" id="popupDateLabel"></div>
-    <textarea id="popupText" placeholder="Write your plans or notes for this day..."></textarea>
-    <div class="popup-buttons">
-      <button class="popup-save" onclick="saveDayNote()">Save</button>
-      <button class="popup-delete" onclick="deleteDayNote()">Delete</button>
-      <button class="popup-cancel" onclick="closeDayPopup()">Cancel</button>
-    </div>
-  </div>
+<div class="popup-inner">
+<div class="popup-title">Day Notes</div>
+<div class="popup-date" id="popupDateLabel"></div>
+<textarea id="popupText"></textarea>
+<div class="popup-buttons">
+<button class="popup-save" onclick="saveDayNote()">Save</button>
+<button class="popup-delete" onclick="deleteDayNote()">Delete</button>
+<button class="popup-cancel" onclick="closeDayPopup()">Cancel</button>
+</div>
+</div>
 </div>
 
 <script>
 const STORAGE_KEY="travelPlannerData_v1";
-let state={
-  tripName:"",tripDestination:"",tripStart:"",tripEnd:"",
-  tripTransport:"",tripLength:"",pack:[],todo:[],dayNotes:{},
-  calYear:null,calMonth:null
-};
-function loadState(){const raw=localStorage.getItem(STORAGE_KEY);if(raw){try{state=JSON.parse(raw);}catch(e){}}}
+let state={tripName:"",tripDestination:"",tripStart:"",tripEnd:"",tripTransport:"",tripLength:"",pack:[],todo:[],dayNotes:{},calYear:null,calMonth:null};
+const $=id=>document.getElementById(id);
+function loadState(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY))||state;}catch{}}
 function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
-function $(id){return document.getElementById(id);}
 
 /* TRIP INPUTS */
 function initInputs(){
-  $("tripName").value=state.tripName;
-  $("tripDestination").value=state.tripDestination;
-  $("tripStart").value=state.tripStart;
-  $("tripEnd").value=state.tripEnd;
-  $("tripTransport").value=state.tripTransport;
-  $("tripLength").value=state.tripLength;
-
-  $("tripName").oninput=e=>{state.tripName=e.target.value;saveState();};
-  $("tripDestination").oninput=e=>{state.tripDestination=e.target.value;saveState();};
-  $("tripStart").oninput=e=>{state.tripStart=e.target.value;updateDuration();saveState();checkReminder();};
-  $("tripEnd").oninput=e=>{state.tripEnd=e.target.value;updateDuration();saveState();};
-  $("tripTransport").oninput=e=>{state.tripTransport=e.target.value;saveState();};
-  $("tripLength").oninput=e=>{state.tripLength=e.target.value;saveState();};
-
-  updateDuration();
+["tripName","tripDestination","tripStart","tripEnd","tripTransport","tripLength"].forEach(id=>$(id).value=state[id]);
+$("tripName").oninput=e=>{state.tripName=e.target.value;saveState();};
+$("tripDestination").oninput=e=>{state.tripDestination=e.target.value;saveState();};
+$("tripStart").oninput=e=>{state.tripStart=e.target.value;updateDuration();checkReminder();saveState();};
+$("tripEnd").oninput=e=>{state.tripEnd=e.target.value;updateDuration();saveState();};
+$("tripTransport").oninput=e=>{state.tripTransport=e.target.value;saveState();};
+$("tripLength").oninput=e=>{state.tripLength=e.target.value;saveState();};
+updateDuration();
 }
 function updateDuration(){
-  const s=state.tripStart,e=state.tripEnd;
-  const badge=$("tripDurationBadge");
-  if(!s||!e){badge.textContent="Duration: –";return;}
-  const sd=new Date(s),ed=new Date(e);
-  if(ed<sd){badge.textContent="Duration: –";return;}
-  const diff=Math.round((ed-sd)/(1000*60*60*24))+1;
-  badge.textContent="Duration: "+diff+" days";
+const s=state.tripStart,e=state.tripEnd,b=$("tripDurationBadge");
+if(!s||!e)return b.textContent="Duration: –";
+const sd=new Date(s),ed=new Date(e);
+if(ed<sd)return b.textContent="Duration: –";
+b.textContent="Duration: "+(Math.round((ed-sd)/86400000)+1)+" days";
 }
 function checkReminder(){
-  const banner=$("reminderBanner");
-  banner.style.display="none";
-  if(!state.tripStart)return;
-  const today=new Date();
-  const start=new Date(state.tripStart);
-  const diffDays=Math.round((start.setHours(0,0,0,0)-today.setHours(0,0,0,0))/(1000*60*60*24));
-  if(diffDays===1)banner.style.display="block";
+const b=$("reminderBanner");b.style.display="none";
+if(!state.tripStart)return;
+const diff=(new Date(state.tripStart).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/86400000;
+if(diff===1)b.style.display="block";
 }
 
-/* PACKING LIST */
+/* EDITABLE LIST ITEMS */
+function editItem(span,item,list){
+const input=document.createElement("input");
+input.value=item.text;input.style.fontSize="5vw";
+span.replaceWith(input);input.focus();
+const finish=()=>{item.text=input.value.trim()||item.text;saveState();list==="pack"?renderPack():renderTodo();};
+input.onblur=finish;input.onkeydown=e=>{if(e.key==="Enter")finish()};
+}
+
+/* PACK LIST */
 function renderPack(){
-  const ul=$("packList");ul.innerHTML="";
-  state.pack.forEach((item,i)=>{
-    const li=document.createElement("li");
-    const cb=document.createElement("input");
-    cb.type="checkbox";cb.checked=item.done;
-    cb.onchange=()=>{item.done=cb.checked;saveState();};
-    const span=document.createElement("span");span.textContent=item.text;
-    const btn=document.createElement("button");btn.textContent="✕";
-    btn.onclick=()=>{state.pack.splice(i,1);saveState();renderPack();};
-    li.appendChild(cb);li.appendChild(span);li.appendChild(btn);
-    ul.appendChild(li);
-  });
+const ul=$("packList");ul.innerHTML="";
+state.pack.forEach((item,i)=>{
+const li=document.createElement("li");
+const span=document.createElement("span");span.textContent=item.text;span.onclick=()=>editItem(span,item,"pack");
+const cb=document.createElement("input");cb.type="checkbox";cb.checked=item.done;cb.onchange=()=>{item.done=cb.checked;saveState();};
+const del=document.createElement("button");del.textContent="✕";del.onclick=()=>{state.pack.splice(i,1);saveState();renderPack();};
+li.append(span,cb,del);ul.appendChild(li);
+});
 }
 function addPackItem(){
-  const inp=$("packInput");const text=inp.value.trim();if(!text)return;
-  state.pack.push({text,done:false});inp.value="";saveState();renderPack();
+const inp=$("packInput"),t=inp.value.trim();if(!t)return;
+state.pack.push({text:t,done:false});inp.value="";saveState();renderPack();
 }
 
 /* TODO LIST */
 function renderTodo(){
-  const ul=$("todoList");ul.innerHTML="";
-  state.todo.forEach((item,i)=>{
-    const li=document.createElement("li");
-    const cb=document.createElement("input");
-    cb.type="checkbox";cb.checked=item.done;
-    cb.onchange=()=>{item.done=cb.checked;saveState();};
-    const span=document.createElement("span");span.textContent=item.text;
-    const btn=document.createElement("button");btn.textContent="✕";
-    btn.onclick=()=>{state.todo.splice(i,1);saveState();renderTodo();};
-    li.appendChild(cb);li.appendChild(span);li.appendChild(btn);
-    ul.appendChild(li);
-  });
+const ul=$("todoList");ul.innerHTML="";
+state.todo.forEach((item,i)=>{
+const li=document.createElement("li");
+const span=document.createElement("span");span.textContent=item.text;span.onclick=()=>editItem(span,item,"todo");
+const cb=document.createElement("input");cb.type="checkbox";cb.checked=item.done;cb.onchange=()=>{item.done=cb.checked;saveState();};
+const del=document.createElement("button");del.textContent="✕";del.onclick=()=>{state.todo.splice(i,1);saveState();renderTodo();};
+li.append(span,cb,del);ul.appendChild(li);
+});
 }
 function addTodoItem(){
-  const inp=$("todoInput");const text=inp.value.trim();if(!text)return;
-  state.todo.push({text,done:false});inp.value="";saveState();renderTodo();
+const inp=$("todoInput"),t=inp.value.trim();if(!t)return;
+state.todo.push({text:t,done:false});inp.value="";saveState();renderTodo();
 }
 
 /* CALENDAR */
-const dayNames=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
 function initCalendar(){
-  const now=new Date();
-  if(state.calYear==null){state.calYear=now.getFullYear();}
-  if(state.calMonth==null){state.calMonth=now.getMonth();}
-  renderCalendar();
+const now=new Date();
+if(state.calYear==null)state.calYear=now.getFullYear();
+if(state.calMonth==null)state.calMonth=now.getMonth();
+renderCalendar();
 }
-function changeMonth(delta){
-  state.calMonth+=delta;
-  if(state.calMonth<0){state.calMonth=11;state.calYear--;}
-  if(state.calMonth>11){state.calMonth=0;state.calYear++;}
-  saveState();renderCalendar();
+function changeMonth(d){
+state.calMonth+=d;
+if(state.calMonth<0){state.calMonth=11;state.calYear--;}
+if(state.calMonth>11){state.calMonth=0;state.calYear++;}
+saveState();renderCalendar();
 }
 function renderCalendar(){
-  const year=state.calYear,month=state.calMonth;
-  $("calMonthLabel").textContent=
-    ["January","February","March","April","May","June","July","August","September","October","November","December"][month]
-    +" "+year;
-
-  const grid=$("calendarGrid");grid.innerHTML="";
-  dayNames.forEach(d=>{
-    const div=document.createElement("div");
-    div.className="calendar-day-name";div.textContent=d;
-    grid.appendChild(div);
-  });
-
-  const first=new Date(year,month,1);
-  const startDay=first.getDay();
-  const daysInMonth=new Date(year,month+1,0).getDate();
-  const prevDays=new Date(year,month,0).getDate();
-
-  for(let i=0;i<startDay;i++){
-    const d=prevDays-startDay+1+i;
-    const cell=document.createElement("div");
-    cell.className="calendar-cell disabled";
-    const span=document.createElement("span");span.textContent=d;
-    cell.appendChild(span);grid.appendChild(cell);
-  }
-
-  for(let d=1;d<=daysInMonth;d++){
-    const cell=document.createElement("div");
-    cell.className="calendar-cell";
-    const span=document.createElement("span");span.textContent=d;
-    cell.appendChild(span);
-
-    const key=formatDateKey(year,month,d);
-    if(state.dayNotes[key]&&state.dayNotes[key].trim()!==""){
-      const dot=document.createElement("div");dot.className="calendar-dot";
-      cell.appendChild(dot);
-    }
-    cell.onclick=()=>openDayPopup(year,month,d);
-    grid.appendChild(cell);
-  }
-
-  const totalCells=7+startDay+daysInMonth;
-  const rows=Math.ceil(totalCells/7);
-  const needed=rows*7-totalCells;
-  for(let i=0;i<needed;i++){
-    const cell=document.createElement("div");
-    cell.className="calendar-cell disabled";
-    grid.appendChild(cell);
-  }
+const y=state.calYear,m=state.calMonth;
+$("calMonthLabel").textContent=months[m]+" "+y;
+const grid=$("calendarGrid");grid.innerHTML="";
+days.forEach(d=>{const el=document.createElement("div");el.className="calendar-day-name";el.textContent=d;grid.appendChild(el);});
+const first=new Date(y,m,1),start=first.getDay(),daysIn=new Date(y,m+1,0).getDate(),prev=new Date(y,m,0).getDate();
+for(let i=0;i<start;i++){const d=prev-start+1+i;const c=document.createElement("div");c.className="calendar-cell disabled";c.innerHTML="<span>"+d+"</span>";grid.appendChild(c);}
+for(let d=1;d<=daysIn;d++){
+const c=document.createElement("div");c.className="calendar-cell";c.innerHTML="<span>"+d+"</span>";
+const key=formatKey(y,m,d);
+if(state.dayNotes[key]){const dot=document.createElement("div");dot.className="calendar-dot";c.appendChild(dot);}
+c.onclick=()=>openDayPopup(y,m,d);grid.appendChild(c);
 }
-function formatDateKey(y,m,d){
-  return y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+const total=7+start+daysIn,rows=Math.ceil(total/7),need=rows*7-total;
+for(let i=0;i<need;i++){const c=document.createElement("div");c.className="calendar-cell disabled";grid.appendChild(c);}
 }
+function formatKey(y,m,d){return y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
 
-/* DAY POPUP */
-let currentPopupKey=null;
+/* POPUP */
+let currentKey=null;
 function openDayPopup(y,m,d){
-  currentPopupKey=formatDateKey(y,m,d);
-  $("popupDateLabel").textContent=currentPopupKey;
-  $("popupText").value=state.dayNotes[currentPopupKey]||"";
-  $("dayPopup").style.display="flex";
+currentKey=formatKey(y,m,d);
+$("popupDateLabel").textContent=currentKey;
+$("popupText").value=state.dayNotes[currentKey]||"";
+$("dayPopup").style.display="flex";
 }
-function closeDayPopup(){
-  $("dayPopup").style.display="none";
-  currentPopupKey=null;
-}
-function saveDayNote(){
-  if(!currentPopupKey)return;
-  state.dayNotes[currentPopupKey]=$("popupText").value.trim();
-  saveState();closeDayPopup();renderCalendar();
-}
-function deleteDayNote(){
-  if(!currentPopupKey)return;
-  delete state.dayNotes[currentPopupKey];
-  saveState();closeDayPopup();renderCalendar();
-}
+function closeDayPopup(){$("dayPopup").style.display="none";currentKey=null;}
+function saveDayNote(){if(!currentKey)return;state.dayNotes[currentKey]=$("popupText").value.trim();saveState();closeDayPopup();renderCalendar();}
+function deleteDayNote(){if(!currentKey)return;delete state.dayNotes[currentKey];saveState();closeDayPopup();renderCalendar();}
 
 /* INIT */
-loadState();
-initInputs();
-renderPack();
-renderTodo();
-initCalendar();
-checkReminder();
+loadState();initInputs();renderPack();renderTodo();initCalendar();checkReminder();
 </script>
 </body></html>
