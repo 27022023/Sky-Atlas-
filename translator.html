@@ -13,10 +13,30 @@ body {
   background: #cfe9ff;
 }
 
+/* HOME ICON */
+.home-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: white;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  border: 2px solid #a3c8ff;
+  cursor: pointer;
+  z-index: 999;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
 #app {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
+  padding-top: 80px; /* space for home icon */
 }
 
 .translator {
@@ -93,6 +113,9 @@ button {
 
 <body>
 
+<!-- HOME BUTTON -->
+<div class="home-btn" onclick="location.href='index.html'">🏠</div>
+
 <div id="app">
 
   <div class="translator">
@@ -150,7 +173,7 @@ const languages = [
   { code: "no", name: "Norwegian", flag: "🇳🇴" },
   { code: "sv", name: "Swedish", flag: "🇸🇪" },
   { code: "et", name: "Estonian", flag: "🇪🇪" },
-  { code: "ar", name: "Arabic", flag: "🇸🇦" }, // Egyptian Arabic uses same code
+  { code: "ar", name: "Arabic", flag: "🇸🇦" },
   { code: "ru", name: "Russian", flag: "🇷🇺" },
   { code: "uk", name: "Ukrainian", flag: "🇺🇦" },
   { code: "sr", name: "Serbian", flag: "🇷🇸" },
@@ -238,3 +261,5 @@ document.getElementById("clearNotesBtn").onclick = () => {
 
 </body>
 </html>
+
+  
