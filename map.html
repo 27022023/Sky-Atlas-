@@ -7,15 +7,38 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:sans-serif;width:100vw;height:100vh;overflow:hidden}
-#map{position:absolute;top:60px;left:0;width:100vw;height:calc(100vh - 200px)}
-.top-bar{position:absolute;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:1000}
-.top-bar input{flex:1;padding:8px 10px;font-size:14px}
-.top-bar button{padding:8px 14px;font-size:14px;cursor:pointer}
-#results{position:absolute;left:0;right:0;bottom:0;max-height:140px;overflow-y:auto;background:#fff;border-top:1px solid #ccc;padding:8px 10px;font-size:14px;z-index:1000}
-.result-item{padding:6px 4px;border-bottom:1px solid #eee;cursor:pointer}
+
+/* MAP */
+#map{position:absolute;top:70px;left:0;width:100vw;height:calc(100vh - 200px)}
+
+/* SEARCH BAR */
+.top-bar{
+  position:absolute;top:10px;left:10px;right:10px;
+  display:flex;gap:10px;z-index:1000
+}
+.top-bar input{
+  flex:1;padding:12px 14px;font-size:20px;
+  border:1px solid #ccc;border-radius:6px
+}
+.top-bar button{
+  padding:12px 18px;font-size:20px;
+  cursor:pointer;border-radius:6px;border:1px solid #aaa;
+  background:#f2f2f2
+}
+
+/* RESULTS PANEL */
+#results{
+  position:absolute;left:0;right:0;bottom:0;
+  max-height:150px;overflow-y:auto;background:#fff;
+  border-top:1px solid #ccc;padding:10px 12px;
+  font-size:18px;z-index:1000
+}
+.result-item{
+  padding:8px 4px;border-bottom:1px solid #eee;cursor:pointer
+}
 .result-item:hover{background:#f3f3f3}
-.result-title{font-weight:bold}
-.result-sub{font-size:12px;color:#666}
+.result-title{font-weight:bold;font-size:20px}
+.result-sub{font-size:16px;color:#666}
 </style>
 </head>
 <body>
@@ -33,13 +56,17 @@ body{font-family:sans-serif;width:100vw;height:100vh;overflow:hidden}
 let map, userMarker, resultsDiv = document.getElementById('results');
 let markers = [];
 
+/* INIT MAP */
 function initMap(lat, lon){
   map = L.map('map').setView([lat, lon], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+
   userMarker = L.marker([lat, lon]).addTo(map).bindPopup("You are here");
+
   map.on('click', onMapClick);
 }
 
+/* TAP ANYWHERE */
 function onMapClick(e){
   const {lat, lng} = e.latlng;
   const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
@@ -52,14 +79,17 @@ function onMapClick(e){
     .openOn(map);
 }
 
+/* CLEAR MARKERS */
 function clearSearchMarkers(){
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 }
 
+/* SEARCH FUNCTION */
 async function searchPlaces(){
   const q = document.getElementById('searchInput').value.trim();
   if(!q) return;
+
   resultsDiv.innerHTML = "Searching…";
   clearSearchMarkers();
 
@@ -88,8 +118,10 @@ async function searchPlaces(){
 
     const div = document.createElement('div');
     div.className = 'result-item';
-    div.innerHTML = `<div class="result-title">${item.display_name.split(',')[0]}</div>
-                     <div class="result-sub">${item.display_name}</div>`;
+    div.innerHTML = `
+      <div class="result-title">${item.display_name.split(',')[0]}</div>
+      <div class="result-sub">${item.display_name}</div>
+    `;
     div.onclick = () => {
       map.setView([lat, lon], 15);
       marker.openPopup();
@@ -102,15 +134,17 @@ async function searchPlaces(){
   });
 }
 
+/* SEARCH BUTTON + ENTER KEY */
 document.getElementById('searchBtn').onclick = searchPlaces;
 document.getElementById('searchInput').addEventListener('keydown', e => {
   if(e.key === 'Enter') searchPlaces();
 });
 
+/* GEOLOCATION */
 if(navigator.geolocation){
   navigator.geolocation.getCurrentPosition(
     pos => initMap(pos.coords.latitude, pos.coords.longitude),
-    () => initMap(48.1374, 11.5755) // fallback: Munich
+    () => initMap(48.1374, 11.5755)
   );
 } else {
   initMap(48.1374, 11.5755);
