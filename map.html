@@ -130,26 +130,35 @@ const categoryTags={
     cafe:{query:`["amenity"="cafe"]`},
     clothes:{query:`["shop"="clothes"]`},
 
-    /* Quiet Spots now includes more nature tags */
+    /* QUIET SPOTS — MUCH MORE COMPLETE */
     park:{query:`
         ["leisure"="park"];
         ["leisure"="garden"];
-        ["boundary"="national_park"];
+        ["leisure"="nature_reserve"];
+        ["leisure"="recreation_ground"];
+        ["landuse"="grass"];
         ["landuse"="forest"];
-        ["tourism"="viewpoint"];
         ["natural"="wood"];
         ["natural"="scrub"];
+        ["natural"="water"];
+        ["tourism"="viewpoint"];
     `},
 
-    /* Fun now includes more entertainment tags */
+    /* FUN — MUCH MORE COMPLETE */
     fun:{query:`
         ["leisure"="amusement_ride"];
+        ["leisure"="amusement_park"];
         ["tourism"="attraction"];
-        ["leisure"="theme_park"];
+        ["tourism"="theme_park"];
         ["amenity"="cinema"];
         ["amenity"="theatre"];
-        ["leisure"="sports_centre"];
+        ["amenity"="arts_centre"];
+        ["amenity"="nightclub"];
         ["leisure"="stadium"];
+        ["leisure"="sports_centre"];
+        ["tourism"="zoo"];
+        ["tourism"="aquarium"];
+        ["leisure"="escape_room"];
     `}
 };
 
