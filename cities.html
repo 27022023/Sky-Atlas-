@@ -3,167 +3,214 @@
 <head>
 <meta charset="UTF-8">
 <title>City Explorer</title>
+
 <style>
-body {font-family: Arial; margin:0; background:#f5f5f5;}
-#search {width:90%; margin:20px auto; display:block; padding:12px; font-size:18px;}
-#list {padding:20px;}
-.city {background:white; padding:15px; margin-bottom:10px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between;}
-.city:hover {background:#eee;}
-#panel {position:fixed; bottom:-100%; left:0; width:100%; height:90%; background:white; border-radius:20px 20px 0 0; padding:20px; overflow-y:auto; transition:0.4s;}
-.close {float:right; font-size:22px; background:none; border:none; cursor:pointer;}
-.title {font-size:28px; font-weight:bold;}
-.country {color:#777; margin-bottom:10px;}
-img {width:100%; border-radius:10px; margin:15px 0;}
-.tag {background:#222; color:white; padding:5px 10px; border-radius:20px; margin-right:5px; display:inline-block; margin-top:10px;}
-.sec {margin-top:20px; font-weight:bold;}
-.box {background:#f0f0f0; padding:10px; border-radius:8px; margin-top:5px;}
-.btn {width:100%; padding:15px; margin-top:15px; border:none; border-radius:10px; font-size:18px; cursor:pointer;}
-.map {background:#0078ff; color:white;}
-.bucket {background:#ffcc00;}
+/* PAGE BACKGROUND */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #dfffe2, #b8f3d0);
+}
+
+/* HOME BUTTON */
+.home-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: white;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  border: 2px solid #a3c8ff;
+  cursor: pointer;
+  z-index: 999;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* SEARCH BAR */
+#search {
+  width: 90%;
+  margin: 80px auto 20px auto;
+  display: block;
+  padding: 16px;
+  font-size: 20px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+/* CITY LIST */
+#list {
+  padding: 20px;
+}
+
+.city {
+  background: #fff8e8;
+  padding: 20px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+}
+
+.city:hover {
+  background: #f3e9d8;
+}
+
+/* PANEL */
+#panel {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  width: 100%;
+  height: 90%;
+  background: #fff7c2;
+  border-radius: 20px 20px 0 0;
+  padding: 25px;
+  overflow-y: auto;
+  transition: 0.4s;
+  font-size: 20px;
+}
+
+/* PANEL CONTENT */
+.close {
+  float: right;
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.country {
+  color: #444;
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+img {
+  width: 100%;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.tag {
+  background: #222;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 20px;
+  margin-right: 6px;
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.sec {
+  margin-top: 25px;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.box {
+  background: #f0f0f0;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 8px;
+  font-size: 18px;
+}
+
+/* BUTTONS */
+.btn {
+  width: 100%;
+  padding: 18px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.map { background: #0078ff; color: white; }
+.bucket { background: #ffcc00; }
+
+/* SAFETY BUTTON */
+.safety-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #fff7c2;
+  border: 2px solid #e8d48f;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 999;
+}
+
+/* SAFETY MODAL */
+#safetyModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.safety-box {
+  background: #fffbe0;
+  padding: 25px;
+  width: 85%;
+  border-radius: 15px;
+  font-size: 20px;
+}
 </style>
 </head>
+
 <body>
 
+<!-- HOME BUTTON -->
+<div class="home-btn" onclick="location.href='index.html'">🏠</div>
+
+<!-- SAFETY BUTTON -->
+<div class="safety-btn" onclick="openSafety()">❗</div>
+
+<!-- SAFETY MODAL -->
+<div id="safetyModal" onclick="closeSafety()">
+  <div class="safety-box" onclick="event.stopPropagation()">
+    <h2>Before you travel, make sure to read this:</h2>
+    <ul>
+      <li>Keep copies of your documents</li>
+      <li>Share your itinerary with someone</li>
+      <li>Avoid unsafe areas at night</li>
+      <li>Use official taxis or transport</li>
+      <li>Keep valuables close</li>
+      <li>Check local emergency numbers</li>
+      <li>Stay aware in crowded areas</li>
+      <li>Learn basic phrases in the local language</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SEARCH + LIST + PANEL -->
 <input id="search" placeholder="Search cities...">
 <div id="list"></div>
-
 <div id="panel"></div>
 
 <script>
-const CITY_DATA = {
-
-"New York":"🇺🇸|USA|Urban|Times Square;Central Park;Statue of Liberty|Pizza;Bagels|Museums;Shopping|Skyline;Parks|Parks;Cafés|Iconic|Casual|Ponytail|Cold|New York|Plane;Subway|Intl flights;Metro",
-"London":"🇬🇧|UK|Historic|Big Ben;London Eye;Buckingham|Tea;Fish & chips|Museums;Parks|Bridges;Parks|Parks;Cafés|Historic|Coats|Low bun|Rainy|London|Plane;Tube|Intl flights;Tube",
-"Paris":"🇫🇷|France|Romantic|Eiffel Tower;Louvre;Notre‑Dame|Pastries;Wine|Cafés;Museums|Eiffel;Streets|Parks;Cafés|Romantic|Chic|Waves|Mild|Paris|Plane;Metro|Intl flights;Metro",
-"Tokyo":"🇯🇵|Japan|Futuristic|Shibuya;Asakusa;Skytree|Sushi;Ramen|Shopping;Arcades|Streets;Temples|Parks;Cafés|Modern|Trendy|Straight|Humid|Tokyo|Plane;Metro|Intl flights;Metro",
-"Dubai":"🇦🇪|UAE|Luxury|Burj Khalifa;Palm;Marina|Shawarma;Dates|Malls;Beaches|Skyline;Desert|Beaches;Cafés|Luxury|Light fabrics|Sleek pony|Hot|Dubai|Plane;Metro|Intl flights;Metro",
-"Singapore":"🇸🇬|Singapore|Clean|Marina Bay;Gardens;Sentosa|Noodles;Seafood|Night markets;Parks|Gardens;Skyline|Parks;Cafés|Clean|Light outfits|Ponytail|Humid|Singapore|Plane;MRT|Intl flights;MRT",
-"Hong Kong":"🇭🇰|China|Skyscrapers|Victoria Peak;Harbor;Mong Kok|Dim sum;Noodles|Shopping;Hikes|Skyline;Harbor|Parks;Cafés|Vibrant|Light layers|Straight|Humid|Hong Kong|Plane;MTR|Intl flights;MTR",
-"Seoul":"🇰🇷|South Korea|Trendy|Myeongdong;Palaces;Gangnam|BBQ;Street food|Shopping;Cafés|Towers;Streets|Parks;Cafés|Trendy|Layers|Straight|Cold|Seoul|Plane;Subway|Intl flights;Subway",
-"Bangkok":"🇹🇭|Thailand|Foodie|Grand Palace;Wat Arun;Khao San|Pad Thai;Curry|Night markets;Bars|Temples;Riverside|Parks;Cafés|Energetic|Light outfits|Braids|Hot|Bangkok|Plane;Taxi|Intl flights;Taxi",
-"Beijing":"🇨🇳|China|Historic|Great Wall;Forbidden City|Dumplings;Duck|Museums;Parks|Wall;Palaces|Parks;Cafés|Historic|Layers|Straight|Cold|Beijing|Plane;Metro|High‑speed trains",
-
-"Shanghai":"🇨🇳|China|Modern|Bund;Pudong;Yu Garden|Noodles;Seafood|Shopping;Nightlife|Skyline;Gardens|Parks;Cafés|Futuristic|Light layers|Straight|Humid|Shanghai|Plane;Metro|High‑speed trains",
-"Delhi":"🇮🇳|India|Historic|Red Fort;India Gate;Lotus Temple|Curry;Chaat|Markets;Temples|Streets;Gardens|Parks;Cafés|Vibrant|Light layers|Braids|Hot|Delhi|Plane;Metro|Domestic flights",
-"Mumbai":"🇮🇳|India|Coastal|Gateway;Marine Drive|Street food;Curry|Markets;Beaches|Beaches;Streets|Parks;Cafés|Busy|Light outfits|Braids|Humid|Mumbai|Plane;Train|Domestic flights",
-"Jakarta":"🇮🇩|Indonesia|Urban|Monas;Old Town|Noodles;Satay|Markets;Malls|Streets;Harbor|Cafés;Parks|Dense|Light outfits|Ponytail|Humid|Jakarta|Plane;Taxi|Regional flights",
-"Manila":"🇵🇭|Philippines|Coastal|Intramuros;Baywalk|Adobo;Seafood|Markets;Nightlife|Bay;Streets|Parks;Cafés|Lively|Light outfits|Braids|Hot|Manila|Plane;Taxi|Regional flights",
-
-"Sydney":"🇦🇺|Australia|Beachy|Opera House;Harbour Bridge|Seafood;Coffee|Beaches;Hikes|Beaches;Harbor|Parks;Cafés|Sunny|Light outfits|Beach waves|Warm|Sydney|Plane;Train|Intl flights",
-"Melbourne":"🇦🇺|Australia|Artistic|Laneways;Parks;Museums|Coffee;Pastries|Cafés;Markets|Laneways;Parks|Cafés;Gardens|Artsy|Layers|Loose hair|Mild|Melbourne|Plane;Tram|Intl flights",
-"Toronto":"🇨🇦|Canada|Urban|CN Tower;Harborfront|Poutine;Coffee|Museums;Parks|Skyline;Harbor|Parks;Cafés|Multicultural|Coats|Ponytail|Cold|Toronto|Plane;Subway|Intl flights",
-"Vancouver":"🇨🇦|Canada|Nature|Stanley Park;Gastown|Seafood;Coffee|Hikes;Beaches|Mountains;Beaches|Parks;Cafés|Scenic|Layers|Waves|Rainy|Vancouver|Plane;SkyTrain|Intl flights",
-"Montreal":"🇨🇦|Canada|Historic|Old Port;Mount Royal|Bagels;Poutine|Cafés;Parks|Old streets;Parks|Cafés;Gardens|European vibe|Coats|Loose hair|Cold|Montreal|Plane;Metro|Intl flights",
-
-"Los Angeles":"🇺🇸|USA|Beachy|Hollywood;Santa Monica|Tacos;Burgers|Beaches;Hikes|Beaches;Hills|Parks;Cafés|Sunny|Light outfits|Beach waves|Warm|Los Angeles|Plane;Car|Domestic flights",
-"San Francisco":"🇺🇸|USA|Tech|Golden Gate;Pier 39|Seafood;Coffee|Tech tours;Parks|Bridge;Hills|Parks;Cafés|Foggy|Layers|Messy bun|Cool|San Francisco|Plane;BART|Domestic flights",
-"Chicago":"🇺🇸|USA|Architecture|Millennium Park;Riverwalk|Pizza;BBQ|Museums;Sports|Skyline;Parks|Parks;Cafés|Bold|Coats|Ponytail|Cold|Chicago|Plane;Metro|Domestic flights",
-"Miami":"🇺🇸|USA|Party|South Beach;Wynwood|Seafood;Cuban food|Beaches;Nightlife|Beaches;Murals|Parks;Cafés|Tropical|Swimwear|Beach waves|Hot|Miami|Plane;Car|Domestic flights",
-"Washington D.C.":"🇺🇸|USA|Historic|White House;Capitol|Burgers;Coffee|Museums;Parks|Monuments;Parks|Parks;Cafés|Political|Coats|Ponytail|Cold|Washington D.C.|Plane;Metro|Domestic flights",
-
-"Mexico City":"🇲🇽|Mexico|Cultural|Zócalo;Chapultepec|Tacos;Tamales|Markets;Museums|Streets;Parks|Parks;Cafés|Massive|Light layers|Braids|Mild|Mexico City|Plane;Metro|Intl flights",
-"Rio de Janeiro":"🇧🇷|Brazil|Beachy|Christ;Sugarloaf|BBQ;Seafood|Beaches;Nightlife|Beaches;Mountains|Parks;Cafés|Scenic|Swimwear|Beach waves|Hot|Rio|Plane;Taxi|Intl flights",
-"São Paulo":"🇧🇷|Brazil|Urban|Avenida Paulista;Ibirapuera|BBQ;Coffee|Nightlife;Shopping|Skyline;Parks|Parks;Cafés|Huge|Light outfits|Ponytail|Warm|São Paulo|Plane;Metro|Intl flights",
-"Buenos Aires":"🇦🇷|Argentina|Cultural|La Boca;Recoleta|Steak;Empanadas|Tango;Markets|Colorful streets|Parks;Cafés|Artistic|Light layers|Loose hair|Mild|Buenos Aires|Plane;Taxi|Intl flights",
-"Santiago":"🇨🇱|Chile|Mountain|San Cristobal;Plaza de Armas|Seafood;Wine|Parks;Museums|Mountains;Streets|Parks;Cafés|Calm|Layers|Ponytail|Mild|Santiago|Plane;Metro|Intl flights",
-
-"Cape Town":"🇿🇦|South Africa|Scenic|Table Mountain;Waterfront|Seafood;BBQ|Beaches;Hikes|Mountains;Beaches|Parks;Cafés|Beautiful|Light layers|Waves|Mild|Cape Town|Plane;Car|Intl flights",
-"Johannesburg":"🇿🇦|South Africa|Urban|Apartheid Museum;Constitution Hill|Braai;Stews|Markets;Museums|Streets;Parks|Parks;Cafés|Cultural|Light layers|Braids|Warm|Johannesburg|Plane;Taxi|Domestic flights",
-"Nairobi":"🇰🇪|Kenya|Wildlife|Nairobi Park;Giraffe Centre|Nyama choma;Stews|Safaris;Markets|Wildlife;Parks|Parks;Cafés|Unique|Light layers|Natural|Mild|Nairobi|Plane;Taxi|Regional flights",
-"Lagos":"🇳🇬|Nigeria|Coastal|Lekki;VI|Jollof;Suya|Beaches;Nightlife|Beaches;Streets|Parks;Cafés|Energetic|Bright outfits|Braids|Hot|Lagos|Plane;Taxi|Regional flights",
-"Cairo":"🇪🇬|Egypt|Historic|Pyramids;Sphinx|Koshari;Falafel|Markets;Museums|Pyramids;Nile|Cafés;Parks|Ancient|Light layers|Braids|Hot|Cairo|Plane;Taxi|Regional flights",
-
-"Istanbul":"🇹🇷|Türkiye|Historic|Hagia Sophia;Blue Mosque|Kebabs;Baklava|Bazaars;Boat rides|Mosques;Bosphorus|Parks;Cafés|East‑meets‑West|Modest outfits|Low bun|Mild|Istanbul|Plane;Tram|Intl flights",
-"Athens":"🇬🇷|Greece|Ancient|Acropolis;Plaka|Gyros;Souvlaki|Markets;Beaches|Acropolis;Streets|Parks;Cafés|Historic|Linen|Waves|Warm|Athens|Plane;Metro|Intl flights"
-
-}; // END OF 50 CITIES
-
-
-
-// ------------------ SCRIPT LOGIC ------------------
-
-function parseCity(str){
-  const [flag,country,cats,sights,food,fun,photos,relax,culture,outfit,hair,weather,maps,transport,durations] = str.split("|");
-  return {
-    flag,
-    country,
-    categories: cats.split(","),
-    sights: sights.split(";"),
-    food: food.split(";"),
-    fun: fun.split(";"),
-    photos: photos.split(";"),
-    relax: relax.split(";"),
-    culture,
-    outfit: outfit.split(";"),
-    hair: hair.split(";"),
-    weather,
-    maps,
-    transport: transport.split(";"),
-    durations: durations.split(";")
-  };
-}
-
-const C = {};
-Object.keys(CITY_DATA).forEach(n => C[n] = parseCity(CITY_DATA[n]));
-
-function render(f=""){
-  const L = document.getElementById("list");
-  L.innerHTML = "";
-  f = f.toLowerCase();
-  Object.keys(C)
-    .sort()
-    .filter(n => n.toLowerCase().includes(f) || C[n].country.toLowerCase().includes(f))
-    .forEach(n => {
-      const c = C[n];
-      L.innerHTML += `
-        <div class="city" onclick="openCity('${n.replace(/'/g,"\\'")}')">
-          <span>${c.flag} ${n}</span>
-          <small>${c.country}</small>
-        </div>`;
-    });
-}
-render();
-
-document.getElementById("search").oninput = e => render(e.target.value);
-
-function openCity(name){
-  const c = C[name];
-  const p = document.getElementById("panel");
-  const transportRows = c.transport.map((t,i)=>`${t}: ${c.durations[i]||""}`).join(" • ");
-
-  p.innerHTML = `
-    <button class="close" onclick="closeP()">✖</button>
-    <div class="title">${c.flag} ${name}</div>
-    <div class="country">${c.country}</div>
-    <img src="https://source.unsplash.com/800x500/?${encodeURIComponent(name)}">
-    ${c.categories.map(t=>`<span class="tag">${t}</span>`).join("")}
-    <div class="sec">Weather</div><div class="box">${c.weather}</div>
-    <div class="sec">Sights</div><div class="box">${c.sights.join(", ")}</div>
-    <div class="sec">Food</div><div class="box">${c.food.join(", ")}</div>
-    <div class="sec">Fun</div><div class="box">${c.fun.join(", ")}</div>
-    <div class="sec">Photos</div><div class="box">${c.photos.join(", ")}</div>
-    <div class="sec">Relax</div><div class="box">${c.relax.join(", ")}</div>
-    <div class="sec">Culture</div><div class="box">${c.culture}</div>
-    <div class="sec">Outfit</div><div class="box">${c.outfit.join(", ")}</div>
-    <div class="sec">Hair</div><div class="box">${c.hair.join(", ")}</div>
-    <div class="sec">Transport</div><div class="box">${transportRows}</div>
-    <button class="btn map" onclick="openMap('${encodeURIComponent(c.maps)}')">🗺 Open in Maps</button>
-    <button class="btn bucket" onclick="addBucket('${name.replace(/'/g,"\\'")}')">⭐ Add to Bucket List</button>
-  `;
-  p.style.bottom = "0";
-}
-
-function closeP(){ document.getElementById("panel").style.bottom="-100%"; }
-function openMap(q){ open("https://www.google.com/maps/search/?api=1&query="+q); }
-
-function addBucket(n){
-  let b = JSON.parse(localStorage.getItem("bucketList")||"[]");
-  b.push({text:"🌍 "+n,checked:false});
-  localStorage.setItem("bucketList",JSON.stringify(b));
-  alert(n+" added!");
-}
-</script>
-
-</body>
-</html>
-    
