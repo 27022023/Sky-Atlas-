@@ -16,12 +16,13 @@ body {
     background: linear-gradient(#cfe9ff, #f7fbff);
     height: 100vh;
     overflow: hidden;
+    font-size: 20px; /* Base font size increased */
 }
 
 /* TOP BAR */
 .top-bar {
     width: 100%;
-    padding: 10px 20px;
+    padding: 20px 20px; /* Bigger padding */
     display: flex;
     justify-content: center;
     position: fixed;
@@ -34,9 +35,9 @@ body {
     background: #e3c9ff;
     color: #4a3b6b;
     border: none;
-    padding: 10px 40px;
+    padding: 18px 60px; /* Bigger button */
     border-radius: 999px;
-    font-size: 16px;
+    font-size: 22px; /* Bigger text */
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -50,27 +51,28 @@ body {
 /* MENU PANEL */
 .menu-panel {
     position: fixed;
-    top: 60px;
+    top: 90px; /* Lower to match bigger button */
     left: 50%;
     transform: translateX(-50%);
-    width: min(90%, 600px);
+    width: min(95%, 700px); /* Bigger menu */
     background: #f3e7ff;
-    border-radius: 20px;
+    border-radius: 25px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    padding: 15px 25px;
+    padding: 25px 35px;
     z-index: 19;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.35s ease;
 }
-.menu-panel.open { max-height: 300px; }
+.menu-panel.open { max-height: 450px; }
 
 .menu-panel ul { list-style: none; }
-.menu-panel li { margin: 8px 0; }
+.menu-panel li { margin: 18px 0; }
 .menu-panel a {
     text-decoration: none;
     color: #4a3b6b;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 22px; /* Bigger menu text */
 }
 
 /* HERO FULL SCREEN */
@@ -78,61 +80,61 @@ body {
     height: 100vh;
     width: 100%;
     text-align: center;
-    padding-top: 120px;
+    padding-top: 180px; /* More spacing for larger elements */
     position: relative;
 }
 
 /* LOGO */
 .logo-title {
     font-family: 'Great Vibes', cursive;
-    font-size: 80px;
+    font-size: 110px; /* Bigger logo */
     color: #3b4b73;
 }
 
 /* TAGLINE */
 .tagline {
-    font-size: 18px;
+    font-size: 26px; /* Bigger tagline */
     color: #5f6f94;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 /* SKY + CLOUDS */
 .sky {
     position: relative;
     width: 100%;
-    max-width: 550px;
+    max-width: 700px; /* Bigger container */
     margin: 0 auto;
-    height: 360px;
+    height: 450px; /* Taller sky */
 }
 
 .cloud {
     position: absolute;
-    width: 140px;
-    height: 70px;
+    width: 180px; /* Bigger clouds */
+    height: 90px;
     background: #ffffff;
     border-radius: 50px;
-    box-shadow: 20px 10px 0 #ffffff, 40px 5px 0 #ffffff;
+    box-shadow: 30px 15px 0 #ffffff, 60px 10px 0 #ffffff;
     opacity: 0.9;
 }
 
 .cloud-1 { top: 20px; left: 5%; animation: float 12s linear infinite; }
-.cloud-2 { top: 80px; right: 5%; animation: float 16s linear infinite; }
-.cloud-3 { top: 160px; left: 65%; animation: float 20s linear infinite; }
+.cloud-2 { top: 100px; right: 5%; animation: float 16s linear infinite; }
+.cloud-3 { top: 200px; left: 65%; animation: float 20s linear infinite; }
 
 @keyframes float {
     0% { transform: translateX(0); }
-    50% { transform: translateX(20px); }
+    50% { transform: translateX(25px); }
     100% { transform: translateX(0); }
 }
 
 /* GLOBE */
 .globe-wrapper {
     position: absolute;
-    top: 80px;
+    top: 100px;
     left: 50%;
     transform: translateX(-50%);
-    width: 260px;
-    height: 260px;
+    width: 330px; /* Bigger globe */
+    height: 330px;
 }
 
 .globe {
@@ -152,29 +154,29 @@ body {
     background: rgba(144, 209, 120, 0.9);
     border-radius: 50px;
 }
-.globe::before { width: 100px; height: 70px; top: 50px; left: 50px; }
-.globe::after { width: 80px; height: 60px; bottom: 60px; right: 40px; }
+.globe::before { width: 130px; height: 90px; top: 70px; left: 70px; }
+.globe::after { width: 110px; height: 80px; bottom: 70px; right: 50px; }
 
 /* AIRPLANE ORBIT */
 .plane-orbit {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 300px;
-    height: 300px;
-    margin-top: -150px;
-    margin-left: -150px;
+    width: 380px; /* Bigger orbit */
+    height: 380px;
+    margin-top: -190px;
+    margin-left: -190px;
     border-radius: 50%;
-    border: 1px dashed rgba(255,255,255,0.6);
+    border: 2px dashed rgba(255,255,255,0.6);
     animation: orbit 10s linear infinite;
 }
 
 .plane {
     position: absolute;
-    top: -10px;
+    top: -15px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 28px;
+    font-size: 40px; /* Bigger plane */
 }
 
 @keyframes orbit {
@@ -199,7 +201,7 @@ body {
         <li><a href="diary.html">Travel Diary</a></li>
         <li><a href="cities.html">City Explorer</a></li>
         <li><a href="translator.html">Translator</a></li>
-        <li><a href="travelplanner.html"> Travel Planner</a></li>
+        <li><a href="travelplanner.html">Travel Planner</a></li>
     </ul>
 </nav>
 
@@ -234,4 +236,4 @@ menuToggle.addEventListener('click', () => {
 
 </body>
 </html>
-        
+    
