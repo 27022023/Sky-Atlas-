@@ -1,260 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Sky Atlas — Map</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Sky Atlas — Map</title><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/><style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:Poppins,sans-serif;width:100vw;height:100vh;overflow:hidden;background:#fff;font-size:4vw}
+.home-icon{position:absolute;top:3vw;left:3vw;background:#e3c9ff;color:#4a3b6b;padding:3vw;border-radius:50%;font-size:6vw;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:9999}
+.search-container{position:absolute;top:3vw;left:18vw;right:3vw;display:flex;gap:2vw;z-index:9999}
+.search-input{flex:1;padding:3vw;border-radius:3vw;border:none;background:#fff7e6;font-size:4vw;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.radius-box{position:absolute;top:14vw;left:3vw;right:3vw;background:#ffffffdd;padding:3vw;border-radius:3vw;box-shadow:0 4px 12px rgba(0,0,0,.15);font-size:4vw;z-index:9999}
+.category-buttons{position:absolute;top:26vw;left:3vw;right:3vw;display:flex;gap:2vw;overflow-x:auto;z-index:9999}
+.category-buttons button{flex:none;padding:3vw 4vw;border:none;border-radius:3vw;font-size:4vw;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-food{background:#ffb3c6}.btn-shop{background:#b3d1ff}.btn-cafe{background:#e8d5b5}.btn-quiet{background:#c9f7d4}.btn-fun{background:#e6c9ff}
+#map{position:absolute;top:40vw;left:0;width:100vw;height:calc(100vh - 40vw)}
+#results{position:absolute;bottom:0;left:0;width:100vw;max-height:40vh;overflow-y:auto;background:#ffffffee;padding:4vw;border-radius:6vw 6vw 0 0;box-shadow:0 -4px 12px rgba(0,0,0,.15);font-size:4vw;z-index:9999}
+.result-item{margin-bottom:4vw;padding-bottom:3vw;border-bottom:1px solid #ddd}
+.clear-btn{position:absolute;top:34vw;right:3vw;background:#ffdddd;padding:2vw 3vw;border-radius:3vw;font-size:4vw;border:none;cursor:pointer;z-index:9999}
+</style></head><body>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-
-body{
-    font-family:'Poppins',sans-serif;
-    width:100vw;height:100vh;
-    overflow:hidden;background:#ffffff;
-    font-size:4vw;
-}
-
-/* HOME ICON */
-.home-icon{
-    position:absolute;top:3vw;left:3vw;
-    background:#e3c9ff;color:#4a3b6b;
-    padding:3vw;border-radius:50%;
-    font-size:6vw;cursor:pointer;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    z-index:9999;
-}
-
-/* SEARCH BAR */
-.search-container{
-    position:absolute;top:3vw;left:18vw;right:3vw;
-    display:flex;gap:2vw;z-index:9999;
-}
-.search-input{
-    flex:1;padding:3vw;border-radius:3vw;
-    border:none;background:#fff7e6;
-    font-size:4vw;box-shadow:0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* RADIUS SLIDER */
-.radius-box{
-    position:absolute;top:14vw;left:3vw;right:3vw;
-    background:#ffffffdd;padding:3vw;
-    border-radius:3vw;box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    font-size:4vw;z-index:9999;
-}
-
-/* CATEGORY BUTTONS */
-.category-buttons{
-    position:absolute;top:26vw;left:3vw;right:3vw;
-    display:flex;gap:2vw;overflow-x:auto;z-index:9999;
-}
-.category-buttons button{
-    flex:none;padding:3vw 4vw;border:none;
-    border-radius:3vw;font-size:4vw;font-weight:600;
-    cursor:pointer;white-space:nowrap;
-}
-.btn-food{background:#ffb3c6;}
-.btn-shop{background:#b3d1ff;}
-.btn-cafe{background:#e8d5b5;}
-.btn-quiet{background:#c9f7d4;}
-.btn-fun{background:#e6c9ff;}
-
-/* MAP */
-#map{
-    position:absolute;top:40vw;left:0;
-    width:100vw;height:calc(100vh - 40vw);
-}
-
-/* RESULTS */
-#results{
-    position:absolute;bottom:0;left:0;width:100vw;
-    max-height:40vh;overflow-y:auto;
-    background:#ffffffee;padding:4vw;
-    border-radius:6vw 6vw 0 0;
-    box-shadow:0 -4px 12px rgba(0,0,0,0.15);
-    font-size:4vw;z-index:9999;
-}
-.result-item{
-    margin-bottom:4vw;padding-bottom:3vw;
-    border-bottom:1px solid #ddd;
-}
-.favorite-btn{
-    cursor:pointer;font-size:6vw;margin-left:2vw;color:gold;
-}
-</style>
-</head>
-
-<body>
-
-<div class="home-icon" onclick="window.location.href='index.html'">🏠</div>
-
-<div class="search-container">
-    <input id="searchInput" class="search-input" type="text" placeholder="Search for cafés, parks, shops…">
-</div>
-
-<div class="radius-box">
-    Search radius: <span id="radiusValue">2000</span> meters
-    <input id="radiusSlider" type="range" min="500" max="5000" value="2000" step="500" style="width:100%;">
-</div>
+<div class="home-icon" onclick="location.href='index.html'">🏠</div>
+<div class="search-container"><input id="searchInput" class="search-input" placeholder="Search for cafés, parks, shops…"></div>
+<div class="radius-box">Search radius: <span id="radiusValue">5000</span> m
+<input id="radiusSlider" type="range" min="500" max="5000" value="5000" step="500" style="width:100%"></div>
 
 <div class="category-buttons">
-    <button class="btn-food" onclick="findCategory('restaurant')">🍽 Food</button>
-    <button class="btn-shop" onclick="findCategory('clothes')">🛍 Shopping</button>
-    <button class="btn-cafe" onclick="findCategory('cafe')">☕ Hangouts</button>
-    <button class="btn-quiet" onclick="findCategory('park')">🌿 Quiet Spots</button>
-    <button class="btn-fun" onclick="findCategory('fun')">🎡 Fun</button>
+<button class="btn-food" onclick="searchCategory('restaurant')">🍽 Food</button>
+<button class="btn-shop" onclick="searchCategory('clothes')">🛍 Shopping</button>
+<button class="btn-cafe" onclick="searchCategory('cafe')">☕ Hangouts</button>
+<button class="btn-quiet" onclick="searchQuiet()">🌿 Quiet</button>
+<button class="btn-fun" onclick="searchFun()">🎡 Fun</button>
 </div>
 
-<div id="map"></div>
-<div id="results"></div>
+<button class="clear-btn" onclick="clearMarkers()">🧹 Clear</button>
 
+<div id="map"></div><div id="results"></div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-let map,userLat,userLon,radius=2000;
+let map,userLat,userLon,radius=5000,activeMarkers=[];
 
-/* CUSTOM COLORED ICONS */
-function icon(color){
-    return L.icon({
-        iconUrl:`https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
-        shadowUrl:"https://unpkg.com/leaflet/dist/images/marker-shadow.png",
-        iconSize:[25,41],iconAnchor:[12,41]
-    });
-}
+/* ICONS */
+function icon(c){return L.icon({iconUrl:`https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${c}.png`,shadowUrl:"https://unpkg.com/leaflet/dist/images/marker-shadow.png",iconSize:[25,41],iconAnchor:[12,41]})}
+const icons={user:icon("yellow"),food:icon("red"),shop:icon("blue"),cafe:icon("orange"),quiet:icon("green"),fun:icon("violet")};
 
-const icons={
-    user:icon("yellow"),
-    food:icon("red"),
-    shop:icon("blue"),
-    cafe:icon("orange"),
-    quiet:icon("green"),
-    fun:icon("violet")
-};
+/* CLEAR */
+function clearMarkers(){activeMarkers.forEach(m=>map.removeLayer(m));activeMarkers=[];results.innerHTML=""}
 
-/* OPTIMIZED CATEGORY TAGS */
-const categoryTags={
-    restaurant:{query:`["amenity"="restaurant"]`,icon:icons.food},
-    cafe:{query:`["amenity"="cafe"]`,icon:icons.cafe},
-    clothes:{query:`["shop"="clothes"]`,icon:icons.shop},
+/* RADIUS */
+radiusSlider.oninput=()=>{radius=radiusSlider.value;radiusValue.textContent=radius}
 
-    /* QUIET SPOTS */
-    park:{query:`
-        ["leisure"="park"];
-        ["leisure"="garden"];
-        ["leisure"="nature_reserve"];
-        ["natural"="wood"];
-        ["tourism"="viewpoint"];
-    `,icon:icons.quiet},
-
-    /* FUN */
-    fun:{query:`
-        ["tourism"="attraction"];
-        ["leisure"="amusement_park"];
-        ["amenity"="cinema"];
-        ["amenity"="theatre"];
-        ["leisure"="sports_centre"];
-        ["tourism"="zoo"];
-        ["tourism"="aquarium"];
-    `,icon:icons.fun}
-};
-
-/* RADIUS SLIDER */
-radiusSlider.oninput=function(){
-    radius=this.value;
-    radiusValue.textContent=radius;
-};
-
-/* INIT MAP */
-navigator.geolocation.getCurrentPosition(pos=>{
-    userLat=pos.coords.latitude;
-    userLon=pos.coords.longitude;
-
-    map=L.map('map').setView([userLat,userLon],14);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
-
-    L.marker([userLat,userLon],{icon:icons.user})
-        .addTo(map).bindPopup("📍 You are here");
+/* MAP INIT */
+navigator.geolocation.getCurrentPosition(p=>{
+userLat=p.coords.latitude;userLon=p.coords.longitude;
+map=L.map("map").setView([userLat,userLon],14);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(map);
+let m=L.marker([userLat,userLon],{icon:icons.user}).addTo(map);activeMarkers.push(m);
 });
 
-/* CATEGORY SEARCH */
-function findCategory(type){
-    const tag=categoryTags[type];
-    if(!tag)return;
-
-    const query=`
-        [out:json][timeout:10];
-        (
-            node${tag.query}(around:${radius},${userLat},${userLon});
-            way${tag.query}(around:${radius},${userLat},${userLon});
-            relation${tag.query}(around:${radius},${userLat},${userLon});
-        );
-        out center 50;
-    `;
-    runQuery(query,tag.icon);
+/* OVERPASS */
+async function run(tag){
+let q=`[out:json][timeout:5];(node${tag}(around:${radius},${userLat},${userLon}););out center 30;`;
+let r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:q});
+let j=await r.json();return j.elements||[];
 }
 
-/* SEARCH BAR */
-searchInput.addEventListener("keydown",e=>{
-    if(e.key==="Enter")searchKeyword(searchInput.value.trim());
+/* RENDER */
+function render(list,ic){
+clearMarkers();
+if(!list.length){results.innerHTML="<p>No results found.</p>";return}
+list.forEach(p=>{
+let lat=p.lat,lon=p.lon,name=p.tags?.name||"Unnamed";
+let m=L.marker([lat,lon],{icon:ic}).addTo(map);activeMarkers.push(m);
+results.innerHTML+=`<div class='result-item'><strong>${name}</strong><br><a target=_blank href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}">➜ Directions</a></div>`;
 });
-
-/* KEYWORD SEARCH */
-function searchKeyword(keyword){
-    if(!keyword)return;
-
-    const query=`
-        [out:json][timeout:10];
-        (
-            node["name"~"${keyword}",i](around:${radius},${userLat},${userLon});
-            node["amenity"~"${keyword}",i](around:${radius},${userLat},${userLon});
-            node["shop"~"${keyword}",i](around:${radius},${userLat},${userLon});
-            node["tourism"~"${keyword}",i](around:${radius},${userLat},${userLon});
-        );
-        out center 50;
-    `;
-    runQuery(query,icons.fun);
 }
 
-/* RUN QUERY */
-function runQuery(query,markerIcon){
-    fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:query})
-    .then(r=>r.json())
-    .then(data=>{
-        results.innerHTML="";
-
-        if(!data.elements.length){
-            results.innerHTML="<p>No results found nearby.</p>";
-            return;
-        }
-
-        data.elements.forEach(p=>{
-            const lat=p.lat||p.center?.lat;
-            const lon=p.lon||p.center?.lon;
-            const name=p.tags?.name||"Unnamed place";
-
-            L.marker([lat,lon],{icon:markerIcon}).addTo(map).bindPopup(name);
-
-            results.innerHTML+=`
-                <div class="result-item">
-                    <strong>${name}</strong>
-                    <span class="favorite-btn" onclick="saveFavorite('${name}',${lat},${lon})">⭐</span><br>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}" target="_blank">➜ Get Directions</a>
-                </div>
-            `;
-        });
-    });
+/* BASIC */
+function searchCategory(t){
+const tags={restaurant:`["amenity"="restaurant"]`,cafe:`["amenity"="cafe"]`,clothes:`["shop"="clothes"]`};
+run(tags[t]).then(r=>render(r,icons[t]));
 }
 
-/* SAVE FAVORITES */
-function saveFavorite(name,lat,lon){
-    let favs=JSON.parse(localStorage.getItem("favorites")||"[]");
-    favs.push({name,lat,lon});
-    localStorage.setItem("favorites",JSON.stringify(favs));
-    alert("Added to favorites!");
+/* QUIET (PRIMARY + FALLBACK + LAKES) */
+async function searchQuiet(){
+let primary=`["leisure"="park"];["leisure"="garden"];["leisure"="nature_reserve"];["natural"="wood"];["tourism"="viewpoint"];["natural"="water"];["water"="lake"];`;
+let fallback=`["landuse"="grass"];["landuse"="meadow"];["leisure"="pitch"];["leisure"="recreation_ground"];["landuse"="forest"];`;
+let r=await run(primary);if(!r.length)r=await run(fallback);render(r,icons.quiet);
+}
+
+/* FUN (PRIMARY + FALLBACK) */
+async function searchFun(){
+let primary=`["tourism"="attraction"];["leisure"="amusement_park"];["amenity"="cinema"];["amenity"="theatre"];["leisure"="sports_centre"];["tourism"="zoo"];["tourism"="aquarium"];`;
+let fallback=`["amenity"="community_centre"];["amenity"="pub"];["amenity"="bar"];["leisure"="bowling_alley"];["leisure"="fitness_centre"];["amenity"="fast_food"];`;
+let r=await run(primary);if(!r.length)r=await run(fallback);render(r,icons.fun);
 }
 </script>
-
-</body>
-</html>
+</body></html>
+        
