@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Sky Atlas — Map</title>
 
-<!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <style>
@@ -57,10 +56,10 @@ body{
     cursor:pointer;white-space:nowrap;
 }
 .btn-food{background:#ffb3c6;}
-.btn-shop{background:#d8baff;}
-.btn-cafe{background:#f5e6cc;}
+.btn-shop{background:#b3d1ff;}
+.btn-cafe{background:#e8d5b5;}
 .btn-quiet{background:#c9f7d4;}
-.btn-fun{background:#fff5a8;}
+.btn-fun{background:#e6c9ff;}
 
 /* MAP */
 #map{
@@ -89,21 +88,17 @@ body{
 
 <body>
 
-<!-- HOME BUTTON -->
 <div class="home-icon" onclick="window.location.href='index.html'">🏠</div>
 
-<!-- SEARCH BAR -->
 <div class="search-container">
     <input id="searchInput" class="search-input" type="text" placeholder="Search for cafés, parks, shops…">
 </div>
 
-<!-- RADIUS SLIDER -->
 <div class="radius-box">
     Search radius: <span id="radiusValue">2000</span> meters
     <input id="radiusSlider" type="range" min="500" max="5000" value="2000" step="500" style="width:100%;">
 </div>
 
-<!-- CATEGORY BUTTONS -->
 <div class="category-buttons">
     <button class="btn-food" onclick="findCategory('restaurant')">🍽 Food</button>
     <button class="btn-shop" onclick="findCategory('clothes')">🛍 Shopping</button>
@@ -112,54 +107,57 @@ body{
     <button class="btn-fun" onclick="findCategory('fun')">🎡 Fun</button>
 </div>
 
-<!-- MAP -->
 <div id="map"></div>
-
-<!-- RESULTS -->
 <div id="results"></div>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
 let map,userLat,userLon,radius=2000;
 
-/* FIXED + EXPANDED CATEGORY TAGS */
-const categoryTags={
-    restaurant:{query:`["amenity"="restaurant"]`},
-    cafe:{query:`["amenity"="cafe"]`},
-    clothes:{query:`["shop"="clothes"]`},
+/* CUSTOM COLORED ICONS */
+function icon(color){
+    return L.icon({
+        iconUrl:`https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
+        shadowUrl:"https://unpkg.com/leaflet/dist/images/marker-shadow.png",
+        iconSize:[25,41],iconAnchor:[12,41]
+    });
+}
 
-    /* QUIET SPOTS — MUCH MORE COMPLETE */
+const icons={
+    user:icon("yellow"),
+    food:icon("red"),
+    shop:icon("blue"),
+    cafe:icon("orange"),
+    quiet:icon("green"),
+    fun:icon("violet")
+};
+
+/* OPTIMIZED CATEGORY TAGS */
+const categoryTags={
+    restaurant:{query:`["amenity"="restaurant"]`,icon:icons.food},
+    cafe:{query:`["amenity"="cafe"]`,icon:icons.cafe},
+    clothes:{query:`["shop"="clothes"]`,icon:icons.shop},
+
+    /* QUIET SPOTS */
     park:{query:`
         ["leisure"="park"];
         ["leisure"="garden"];
         ["leisure"="nature_reserve"];
-        ["leisure"="recreation_ground"];
-        ["landuse"="grass"];
-        ["landuse"="forest"];
         ["natural"="wood"];
-        ["natural"="scrub"];
-        ["natural"="water"];
         ["tourism"="viewpoint"];
-    `},
+    `,icon:icons.quiet},
 
-    /* FUN — MUCH MORE COMPLETE */
+    /* FUN */
     fun:{query:`
-        ["leisure"="amusement_ride"];
-        ["leisure"="amusement_park"];
         ["tourism"="attraction"];
-        ["tourism"="theme_park"];
+        ["leisure"="amusement_park"];
         ["amenity"="cinema"];
         ["amenity"="theatre"];
-        ["amenity"="arts_centre"];
-        ["amenity"="nightclub"];
-        ["leisure"="stadium"];
         ["leisure"="sports_centre"];
         ["tourism"="zoo"];
         ["tourism"="aquarium"];
-        ["leisure"="escape_room"];
-    `}
+    `,icon:icons.fun}
 };
 
 /* RADIUS SLIDER */
@@ -176,7 +174,8 @@ navigator.geolocation.getCurrentPosition(pos=>{
     map=L.map('map').setView([userLat,userLon],14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
 
-    L.marker([userLat,userLon]).addTo(map).bindPopup("📍 You are here").openPopup();
+    L.marker([userLat,userLon],{icon:icons.user})
+        .addTo(map).bindPopup("📍 You are here");
 });
 
 /* CATEGORY SEARCH */
@@ -185,15 +184,15 @@ function findCategory(type){
     if(!tag)return;
 
     const query=`
-        [out:json];
+        [out:json][timeout:10];
         (
             node${tag.query}(around:${radius},${userLat},${userLon});
             way${tag.query}(around:${radius},${userLat},${userLon});
             relation${tag.query}(around:${radius},${userLat},${userLon});
         );
-        out center;
+        out center 50;
     `;
-    runQuery(query);
+    runQuery(query,tag.icon);
 }
 
 /* SEARCH BAR */
@@ -201,26 +200,25 @@ searchInput.addEventListener("keydown",e=>{
     if(e.key==="Enter")searchKeyword(searchInput.value.trim());
 });
 
-/* IMPROVED KEYWORD SEARCH */
+/* KEYWORD SEARCH */
 function searchKeyword(keyword){
     if(!keyword)return;
 
     const query=`
-        [out:json];
+        [out:json][timeout:10];
         (
             node["name"~"${keyword}",i](around:${radius},${userLat},${userLon});
             node["amenity"~"${keyword}",i](around:${radius},${userLat},${userLon});
             node["shop"~"${keyword}",i](around:${radius},${userLat},${userLon});
-            node["leisure"~"${keyword}",i](around:${radius},${userLat},${userLon});
             node["tourism"~"${keyword}",i](around:${radius},${userLat},${userLon});
         );
-        out center;
+        out center 50;
     `;
-    runQuery(query);
+    runQuery(query,icons.fun);
 }
 
 /* RUN QUERY */
-function runQuery(query){
+function runQuery(query,markerIcon){
     fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:query})
     .then(r=>r.json())
     .then(data=>{
@@ -236,7 +234,7 @@ function runQuery(query){
             const lon=p.lon||p.center?.lon;
             const name=p.tags?.name||"Unnamed place";
 
-            L.marker([lat,lon]).addTo(map).bindPopup(name);
+            L.marker([lat,lon],{icon:markerIcon}).addTo(map).bindPopup(name);
 
             results.innerHTML+=`
                 <div class="result-item">
